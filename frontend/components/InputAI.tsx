@@ -1,6 +1,13 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { generate } from './gemini';
+
+type Role = "users" | "assistant";
+type Message = { id: string; role: Role; content: string; ts: number; }
+
+const STORAGE_KEY = "ai_chat_messages_v1"
+const MAX_MESSAGES = 100
+const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36)
 
 const InputAI: React.FC = () => {
 
@@ -8,7 +15,22 @@ const InputAI: React.FC = () => {
   const [output, setOutput] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [messages, setMessages] = useState<Message[]>([])
 
+  useEffect(() => {
+    try { const raw = localStorage.getItem(STORAGE_KEY)
+      if (raw) {
+        setMessages(JSON.parse(raw))
+      }
+     } catch {}
+  }, []);
+
+  useEffect(() => {
+    try {  localStorage.setItem(STORAGE_KEY, JSON.stringify(messages)) 
+     } catch {}
+  }, []) 
+
+  const trim = (list: Message[]) => list.length > MAX_MESSAGES ? list.slice(-MAX_MESSAGES) : list
   const run = async () => {
     setLoading(true)
     setError('')
