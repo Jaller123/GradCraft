@@ -1,0 +1,37 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.container {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.links {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+}
+
+.link {
+  text-decoration: none;
+  color: #374151;
+}
+
+.link:hover {
+  text-decoration: underline;
+}

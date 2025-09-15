@@ -1,0 +1,25 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.label {
+  font-weight: 500;
+}
+
+.input,
+.textarea {
+  border: 1px solid #d1d5db;
+  padding: 0.5rem;
+  border-radius: 6px;
+}
+
+.textarea {
+  resize: vertical;
+}
