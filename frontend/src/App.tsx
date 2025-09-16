@@ -39,7 +39,6 @@ function CvPage() {
 
   return (
   <>
-      <Navbar />
       <main className={styles.main}>
         <div className={styles.grid}>
           <Chatbot onCvExtract={(json) => setCv((prev) => mergeCv(prev, json))} />
@@ -56,6 +55,7 @@ function CvPage() {
 export default function App() {
   return (
     <Router>
+      <Navbar />
       <Routes>
         <Route path="/" element={<StartHero />} />
          <Route path="/cv" element={<CvPage />} />

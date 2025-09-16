@@ -1,3 +1,18 @@
 @import "tailwindcss";
 
+:root {
+  --bg: #0f1124;     /* same dark navy as your hero */
+  --fg: #e9ecf2;
+  --nav-h: 64px;     /* adjust to your Navbar height */
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+}
 
