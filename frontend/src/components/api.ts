@@ -1,4 +1,4 @@
-import { api } from "./client";
+import { api } from "../components/client";
 
 export interface GenerateResponse {
     output?: string;

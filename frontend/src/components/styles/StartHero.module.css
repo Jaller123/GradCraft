@@ -1,0 +1,117 @@
+/* Dark, elegant theme to match your screenshot */
+
+:root {
+  --bg: #0f1124;            /* deep navy */
+  --card: #14162e;          /* slightly lighter panel */
+  --fg: #e9ecf2;            /* near-white text */
+  --muted: #b7bed0;         /* secondary text */
+  --accent: #6aa9ff;        /* soft blue accent */
+  --accent-2: #68e2c2;      /* mint accent */
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  background: radial-gradient(1200px 600px at 70% -20%, rgba(104,226,194,.12), transparent 60%),
+              radial-gradient(800px 500px at 20% -30%, rgba(106,169,255,.10), transparent 60%),
+              var(--bg);
+  color: var(--fg);
+  padding: clamp(64px, 10vw, 140px) 24px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.inner {
+  max-width: 1100px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.title {
+  line-height: 1.05;
+  font-weight: 600;
+  font-size: clamp(40px, 6.8vw, 84px);
+  letter-spacing: .2px;
+  margin: 0 0 28px;
+}
+
+.title span {
+  display: block;
+}
+
+.underline {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 6px;
+}
+
+.underline::after {
+  content: "";
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  bottom: 0;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  filter: drop-shadow(0 6px 10px rgba(104,226,194,.25));
+}
+
+.ctaRow {
+  display: flex;
+  gap: 22px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 22px;
+  flex-wrap: wrap;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 22px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform .15s ease, box-shadow .15s ease, background .2s ease;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255,255,255,.06);
+  will-change: transform;
+}
+
+.primary {
+  color: #0b1222;
+  background: linear-gradient(135deg, #6aa9ff, #68e2c2);
+}
+
+.primary:hover {
+  transform: translateY(-2px);
+}
+
+.secondary {
+  color: var(--fg);
+  background: #16182f;
+}
+
+.secondary:hover {
+  background: #1c2040;
+  transform: translateY(-2px);
+}
+
+/* Ambient glow layer */
+.glow {
+  position: absolute;
+  inset: -40% -20% auto -20%;
+  height: 70%;
+  background: radial-gradient(600px 300px at 50% 10%, rgba(106,169,255,.10), transparent 60%),
+              radial-gradient(700px 400px at 50% -10%, rgba(104,226,194,.14), transparent 65%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .cta { transition: none; }
+}

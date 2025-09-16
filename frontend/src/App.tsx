@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import Navbar from "../components/Navbar";
-import CvForm, { CvData } from "../components/CvForm";
-import Chatbot from "../components/ChatBot";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import CvForm, { CvData } from "./components/CvForm";
+import Chatbot from "./components/ChatBot";
+import styles from "./App.module.css";
+import StartHero from "./components/StartHero";
 
 const EMPTY_CV: CvData = {
   fullName: "",
@@ -31,17 +34,17 @@ function mergeCv(prev: CvData, incoming: Partial<CvData>): CvData {
   };
 }
 
-function App() {
+function CvPage() {
   const [cv, setCv] = useState<CvData>(EMPTY_CV);
 
   return (
-    <>
+  <>
       <Navbar />
-      <main style={{ maxWidth: "1100px", margin: "0 auto", padding: "1rem" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+      <main className={styles.main}>
+        <div className={styles.grid}>
           <Chatbot onCvExtract={(json) => setCv((prev) => mergeCv(prev, json))} />
           <div>
-            <h2 style={{ fontWeight: 600, marginBottom: "0.5rem" }}>Your CV</h2>
+            <h2 className={styles.heading}>Your CV</h2>
             <CvForm value={cv} onChange={setCv} />
           </div>
         </div>
@@ -50,4 +53,14 @@ function App() {
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<StartHero />} />
+         <Route path="/cv" element={<CvPage />} />
+        {/* <Route path="/recruiters" element={<Recruiters />} /> */}
+      </Routes>
+    </Router>
+  );
+}
