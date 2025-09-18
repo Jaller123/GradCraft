@@ -1,31 +1,56 @@
-/* Dark, elegant theme to match your screenshot */
-
+/* Dark, elegant theme */
 :root {
   --bg: #0f1124;            /* deep navy */
-  --card: #14162e;          /* slightly lighter panel */
-  --fg: #e9ecf2;            /* near-white text */
-  --muted: #b7bed0;         /* secondary text */
-  --accent: #6aa9ff;        /* soft blue accent */
-  --accent-2: #68e2c2;      /* mint accent */
+  --card: #14162e;
+  --fg: #e9ecf2;
+  --muted: #b7bed0;
+  --accent: #6aa9ff;        /* soft blue */
+  --accent-2: #68e2c2;      /* mint */
   --shadow: 0 10px 30px rgba(0,0,0,.35);
+  --nav-h: 64px;            /* keep in sync with Navbar height */
 }
 
 .hero {
+  position: relative;
+  isolation: isolate;
   min-height: calc(100svh - var(--nav-h)); /* full screen minus navbar */
   display: grid;
   place-items: center;
   padding: 48px 24px;
-  background:
-    radial-gradient(1200px 600px at 70% -20%, rgba(104,226,194,.12), transparent 60%),
-    radial-gradient(800px 500px at 20% -30%, rgba(106,169,255,.10), transparent 60%),
-    var(--bg);
+  overflow: hidden; /* ensure video/tint don’t scroll */
+  color: var(--fg);
 }
 
+/* Full-bleed background video */
+.bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+  /* Subtle grade + hue shift to lean blue/purple, and darken */
+  filter: hue-rotate(260deg) saturate(0.9) contrast(0.95) brightness(0.55);
+}
+
+/* Dark blue/purple tint overlay */
+.tint {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  /* Layer a dark navy with a soft blue/purple gradient glow */
+  background:
+    radial-gradient(1000px 600px at 70% -10%, rgba(0, 106, 255, 0.12), transparent 60%),
+    radial-gradient(900px 550px at 20% -20%, rgba(58, 0, 249, 0.1), transparent 60%),
+    linear-gradient(180deg, rgba(36, 30, 87, 0.78), rgba(10,8,24,0.84));
+}
 
 .inner {
+  position: relative;
   max-width: 1100px;
   margin-inline: auto;
   text-align: center;
+  z-index: 1; /* above tint/video */
 }
 
 .title {
@@ -36,26 +61,12 @@
   margin: 0 0 28px;
 }
 
-.title span {
-  display: block;
-}
+.title span { display: block; }
 
-.underline {
-  position: relative;
-  display: inline-block;
-  padding-bottom: 6px;
-}
-
-.underline::after {
-  content: "";
-  position: absolute;
-  left: -2%;
-  right: -2%;
-  bottom: 0;
-  height: 4px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--accent), var(--accent-2));
-  filter: drop-shadow(0 6px 10px rgba(104,226,194,.25));
+/* Underline accent for the second line */
+.heroText {
+  color:#E29CD2;
+  text-shadow: -1px -1px 0 #241958, 1px -1px 0 #241958, -1px 1px 0 #241958, 1px 1px 0 #241958;
 }
 
 .ctaRow {
@@ -86,33 +97,31 @@
   color: #0b1222;
   background: linear-gradient(135deg, #6aa9ff, #68e2c2);
 }
-
-.primary:hover {
-  transform: translateY(-2px);
-}
+.primary:hover { transform: translateY(-2px); }
 
 .secondary {
   color: var(--fg);
   background: #16182f;
 }
-
 .secondary:hover {
   background: #1c2040;
   transform: translateY(-2px);
 }
 
-/* Ambient glow layer */
+/* Optional extra ambient glow */
 .glow {
   position: absolute;
   inset: -40% -20% auto -20%;
   height: 70%;
-  background: radial-gradient(600px 300px at 50% 10%, rgba(106,169,255,.10), transparent 60%),
-              radial-gradient(700px 400px at 50% -10%, rgba(104,226,194,.14), transparent 65%);
+  width: 70%;
+  background:
+    radial-gradient(600px 300px at 50% 10%, rgba(106,169,255,.10), transparent 60%),
+    radial-gradient(700px 400px at 50% -10%, rgba(104,226,194,.14), transparent 65%);
   pointer-events: none;
-  z-index: -1;
+  z-index: 0;
 }
 
-/* Respect reduced motion */
+/* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
   .cta { transition: none; }
 }
