@@ -67,13 +67,19 @@ const CvForm: React.FC<Props> = ({ value, onChange }) => {
 
    const addExperience = () => {
     const newItem = {
-      role: expDraft.role.trim(),
-      company: expDraft.company.trim(),
-      start: toYMD(expDraft.start),
-      end: toYMD(expDraft.end),
-      bullets: expDraft.bullets.split(",").map(s => s.trim()).filter(Boolean),
-      tech: expDraft.tech.split(",").map(s => s.trim()).filter(Boolean),
-    };
+        role: expDraft.role.trim(),
+        company: expDraft.company.trim(),
+        start: toYMD(expDraft.start),
+        end: toYMD(expDraft.end),
+        bullets: expDraft.bullets
+          .split(/\r?\n/)                // split by line
+          .map(s => s.replace(/^\s*[-•]\s*/, "").trim()) // strip leading "- " or "• "
+          .filter(Boolean),
+        tech: expDraft.tech
+          .split(",")
+          .map(s => s.trim())
+          .filter(Boolean),
+      };
     if (!newItem.role || !newItem.company) return;
 
     set("experience", [...value.experience, newItem]);
@@ -95,6 +101,7 @@ const CvForm: React.FC<Props> = ({ value, onChange }) => {
   }
 
   return (
+  <div className={styles.cardSurface}>
     <form className={styles.form}>
       <div className={styles.field}>
         <label className={styles.label}>Full name</label>
@@ -126,15 +133,25 @@ const CvForm: React.FC<Props> = ({ value, onChange }) => {
       <div className={styles.field}>
         <label className={styles.label}>Experience</label>
 
-        {value.experience.map((exp, i) => (
+              {value.experience.map((exp, i) => (
           <div key={i} className={styles.card}>
             <div><strong>{exp.role}</strong> @ {exp.company}</div>
             <div>{exp.start || "—"} – {exp.end || "Present"}</div>
+
+               {exp.bullets?.length > 0 && (
+      <ul className={styles.list}>
+        {exp.bullets.map((b, bi) => (
+          <li key={bi}>{b}</li>
+        ))}
+      </ul>
+    )}
+
             <button type="button" onClick={() => removeExperience(i)} className={styles.btnGhost}>
               Remove
             </button>
           </div>
         ))}
+
 
         {/* Add new experience */}
         <input
@@ -165,9 +182,10 @@ const CvForm: React.FC<Props> = ({ value, onChange }) => {
           />
         </div>
 
-        <input
-          className={styles.input}
-          placeholder="Bullets (comma separated)"
+        <textarea
+          className={styles.textarea}
+          placeholder={`Bullets (one per line)\nExample:\n- Built feature X\n- Improved load time by 40%`}
+          rows={4}
           value={expDraft.bullets}
           onChange={e => setExpDraft(s => ({ ...s, bullets: e.target.value }))}
         />
@@ -177,12 +195,7 @@ const CvForm: React.FC<Props> = ({ value, onChange }) => {
           value={expDraft.tech}
           onChange={e => setExpDraft(s => ({ ...s, tech: e.target.value }))}
         />
-
-        <button type="button" onClick={addExperience} className={styles.btnPrimary}>
-          Add Experience
-        </button>
-      </div>
-      <div className={styles.field}>
+         <div className={styles.field}>
         <label className={styles.label}>Skills (comma separated)</label>
         <input
           className={styles.input}
@@ -198,9 +211,13 @@ const CvForm: React.FC<Props> = ({ value, onChange }) => {
           }
         />
       </div>
-
+        <button type="button" onClick={addExperience} className={styles.btnPrimary}>
+          Add Experience
+        </button>
+      </div>
       {/* TODO: map experience, education, projects, languages with add/remove buttons */}
     </form>
+  </div>
   );
 };
 

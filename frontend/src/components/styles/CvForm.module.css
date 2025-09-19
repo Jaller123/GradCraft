@@ -4,22 +4,134 @@
   gap: 1rem;
 }
 
+/* optional: wrap the whole form in a soft card on dark bg */
+.cardSurface {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 16px;
+}
+
 .field {
   display: grid;
   gap: 0.5rem;
 }
 
+/* labels a bit brighter on dark themes */
 .label {
-  font-weight: 500;
+  font-weight: 600;
+  color: #eef2f7;
+  letter-spacing: 0.2px;
 }
 
+/* === White input surface === */
 .input,
 .textarea {
-  border: 1px solid #d1d5db;
-  padding: 0.5rem;
-  border-radius: 6px;
+  background: #ffffff;             /* <-- white background */
+  color: #111827;                  /* slate-900 */
+  border: 1px solid #d1d5db;       /* gray-300 */
+  padding: 0.625rem 0.75rem;       /* 10px 12px */
+  border-radius: 10px;
+  outline: none;
+  transition: box-shadow .15s ease, border-color .15s ease, transform .02s ease;
+  box-shadow: 0 1px 0 rgba(0,0,0,.02);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: #9ca3af; /* gray-400 */
+}
+
+.input:focus,
+.textarea:focus {
+  border-color: #93c5fd;           /* blue-300 */
+  box-shadow: 0 0 0 4px rgba(59,130,246,.15); /* blue focus ring */
+}
+
+.input:active {
+  transform: translateY(0.5px);
 }
 
 .textarea {
   resize: vertical;
+  min-height: 110px;
+}
+
+/* rows for date pickers side-by-side */
+.row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+/* experience items */
+.card {
+  background: #ffffff;
+  color: #111827;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  display: grid;
+  gap: 6px;
+}
+
+.muted {
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+/* buttons */
+.btnPrimary {
+  background: linear-gradient(135deg, #6aa9ff, #68e2c2);
+  color: #0b1222;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .1s ease, box-shadow .15s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,.15);
+}
+.btnPrimary:hover { transform: translateY(-1px); }
+.btnPrimary:active { transform: translateY(0); }
+
+.btnGhost {
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btnGhost:hover { background: #f9fafb; }
+
+/* react-datepicker tweaks so it’s readable on dark pages */
+.react-datepicker,
+.react-datepicker__header {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+  color: #111827 !important;
+}
+.react-datepicker__day,
+.react-datepicker__current-month,
+.react-datepicker__day-name {
+  color: #111827 !important;
+}
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background: #3b82f6 !important;
+  color: #ffffff !important;
+}
+.react-datepicker-popper {
+  z-index: 50; /* above cards */
+}
+
+.list {
+  margin: 6px 0 0;
+  padding-left: 1.25rem;
+}
+.list li {
+  margin: 2px 0;
 }
