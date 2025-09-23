@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import CvForm from "./components/CvForm";
-import Chatbot from "./components/ChatBot";
+import CvForm from "./components/CV Form/CvForm";
+import Chatbot from "./components/CV Form/ChatBot";
 import StartHero from "./components/StartHero";
 import styles from "./App.module.css";
 
@@ -23,17 +23,25 @@ const EMPTY_CV: CvData = {
 
 // keep existing edits; fill only empty fields
 function mergeCv(prev: CvData, incoming: Partial<CvData>): CvData {
-  const take = <T,>(a: T, b?: T) => (a && a !== ("" as any) ? a : (b ?? a));
+  const take = <T,>(a: T, b?: T) => (a && a !== ("" as any) ? a : b ?? a);
   return {
     fullName: take(prev.fullName, incoming.fullName),
     title: take(prev.title, incoming.title),
     summary: take(prev.summary, incoming.summary),
     contacts: { ...(prev.contacts || {}), ...(incoming.contacts || {}) },
     skills: incoming.skills?.length ? incoming.skills : prev.skills,
-    experience: incoming.experience?.length ? (incoming.experience as any) : prev.experience,
-    education: incoming.education?.length ? (incoming.education as any) : prev.education,
-    projects: incoming.projects?.length ? (incoming.projects as any) : prev.projects,
-    languages: incoming.languages?.length ? (incoming.languages as any) : prev.languages,
+    experience: incoming.experience?.length
+      ? (incoming.experience as any)
+      : prev.experience,
+    education: incoming.education?.length
+      ? (incoming.education as any)
+      : prev.education,
+    projects: incoming.projects?.length
+      ? (incoming.projects as any)
+      : prev.projects,
+    languages: incoming.languages?.length
+      ? (incoming.languages as any)
+      : prev.languages,
   };
 }
 

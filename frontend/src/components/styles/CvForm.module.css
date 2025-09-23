@@ -55,7 +55,7 @@
 .textarea {
   width: 100%;
   font-size: 16px;
-  color: var(--text);
+  color: black;
   background: white;
   padding: 10px 12px;
   border: 1px solid var(--teal);        /* top/left/right removed below for the underline effect */
@@ -66,7 +66,7 @@
   border-radius: 6px 6px 6px 6px;
   transition: box-shadow .18s ease, background-color .18s ease, border-color .18s ease;
   resize: vertical;
-  min-height: 55px;
+  min-height: 55px
 }
 
 .input::placeholder,
@@ -79,6 +79,7 @@
   border-color: var(--teal);
   box-shadow: 0 0 0 4px var(--ring);
   background: rgba(20, 20, 20, 0.35);
+  color: white;
 }
 
 
