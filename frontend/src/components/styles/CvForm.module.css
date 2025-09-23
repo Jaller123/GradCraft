@@ -56,15 +56,17 @@
   width: 100%;
   font-size: 16px;
   color: var(--text);
-  background: var(--bg-input);
+  background: white;
   padding: 10px 12px;
   border: 1px solid var(--teal);        /* top/left/right removed below for the underline effect */
   border-top: none;
   border-left: none;
   border-right: none;
   outline: none;
-  border-radius: 6px 6px 0 0;
+  border-radius: 6px 6px 6px 6px;
   transition: box-shadow .18s ease, background-color .18s ease, border-color .18s ease;
+  resize: vertical;
+  min-height: 55px;
 }
 
 .input::placeholder,
@@ -79,10 +81,7 @@
   background: rgba(20, 20, 20, 0.35);
 }
 
-.textarea {
-  resize: vertical;
-  min-height: 110px;
-}
+
 
 /* ====== Experience cards (each added item) ====== */
 .card {
@@ -105,6 +104,13 @@
   margin: 2px 0;
   color: var(--text);
 }
+
+.btnRow {
+  display: flex;
+  gap: .5rem;
+  margin-top: .25rem;
+}
+
 
 /* ====== Buttons ====== */
 .btnPrimary {

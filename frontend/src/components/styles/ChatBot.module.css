@@ -114,3 +114,11 @@
   color: #ffb4b4; /* softer on dark */
   font-size: 0.9rem;
 }
+
+.wrap {
+  color: #111;            /* was var(--text) (white); now black */
+}
+
+
+
+/* Optional: tone down the clear button to match dark text */

@@ -5,6 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import List
 from dotenv import load_dotenv, find_dotenv
+import re
+from typing import Optional, Dict, Any, List, Tuple
+
 
 load_dotenv(dotenv_path=find_dotenv(), override=False)
 
@@ -231,19 +234,143 @@ def _gemini_json_call(system_instruction: str, user_prompt: str, schema: dict):
         # If model returns stray prose, ask it to “JSON only” in your prompt or re-try here
         raise HTTPException(502, "Model returned non-JSON output")
 
+# ===== Normalizer block starts here (top-level, no indentation) =====
+_DATE_RE = re.compile(r"\b(19|20)\d{2}(?:-(0[1-9]|1[0-2]))?\b")
+
+def _pick_year_or_year_month(value: Optional[str]) -> Optional[str]:
+    if not value:
+        return None
+    s = str(value)
+    # collapse common range notations like "2024-2025", "2024 – 2025", "2024 to 2025"
+    rng = re.search(r"\b((?:19|20)\d{2})\s*(?:-|–|—|to|until|through)\s*((?:19|20)\d{2})\b", s, re.IGNORECASE)
+    if rng:
+        # caller decides which side is start/end; here we just return start/end via caller
+        # we only extract one side in this function, so just return the first match
+        return rng.group(1)
+
+    m = _DATE_RE.search(s)
+    return m.group(0) if m else None
+
+def _extract_range(text: str) -> Tuple[Optional[str], Optional[str]]:
+    """Pull 'YYYY' or 'YYYY-MM' start/end from free text like '2024-2025'."""
+    if not text:
+        return (None, None)
+    t = str(text)
+    rng = re.search(r"\b((?:19|20)\d{2})(?:-(0[1-9]|1[0-2]))?\s*(?:-|–|—|to|until|through)\s*((?:19|20)\d{2})(?:-(0[1-9]|1[0-2]))?\b", t, re.IGNORECASE)
+    if rng:
+        start = f"{rng.group(1)}{('-' + rng.group(2)) if rng.group(2) else ''}"
+        end = f"{rng.group(3)}{('-' + rng.group(4)) if rng.group(4) else ''}"
+        return (start, end)
+    # fallback: single date somewhere in text
+    single = _DATE_RE.search(t)
+    if single:
+        return (single.group(0), None)
+    return (None, None)
+
+def _clean_bullets(bullets: List[str]) -> List[str]:
+    out = []
+    for b in bullets[:5]:  # cap length
+        b = re.sub(r"^\s*[-•]\s*", "", str(b)).strip()
+        if not b:
+            continue
+        # cap length but keep words intact
+        if len(b) > 160:
+            b = b[:160].rsplit(" ", 1)[0]
+        out.append(b)
+    return out
+
+def _normalize_experience(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    seen = set()
+    norm: List[Dict[str, Any]] = []
+
+    for it in items or []:
+        role = (it.get("role") or "").strip()
+        company = (it.get("company") or "").strip()
+        start_raw = it.get("start")
+        end_raw = it.get("end")
+
+        # If model stuffed a range into one field, try to split it
+        s_from_text, e_from_text = (None, None)
+        if isinstance(start_raw, str) and any(sep in start_raw for sep in ["-", "–", "—", "to", "until", "through"]):
+            s_from_text, e_from_text = _extract_range(start_raw)
+        elif isinstance(end_raw, str) and any(sep in end_raw for sep in ["-", "–", "—", "to", "until", "through"]):
+            s_from_text, e_from_text = _extract_range(end_raw)
+
+        start = _pick_year_or_year_month(s_from_text or start_raw)
+        end = _pick_year_or_year_month(e_from_text or end_raw)
+
+        # normalize bullets/tech
+        bullets = _clean_bullets(it.get("bullets") or [])
+        tech = [t.strip() for t in (it.get("tech") or []) if str(t).strip()][:12]
+
+        key = (role.lower(), company.lower(), start or "", end or "")
+        if not role or not company:
+            continue  # skip incomplete entries
+        if key in seen:
+            continue  # dedupe
+        seen.add(key)
+
+        norm.append({
+            "role": role,
+            "company": company,
+            **({"start": start} if start else {}),
+            **({"end": end} if end else {}),
+            "bullets": bullets,
+            "tech": tech,
+        })
+
+    return norm
+
+def _normalize_cv(cv: Dict[str, Any]) -> Dict[str, Any]:
+    """Coerce model output to safe, consistent shapes."""
+    if not isinstance(cv, dict):
+        return cv
+    cv = dict(cv)  # shallow copy
+
+    # Experience
+    cv["experience"] = _normalize_experience(cv.get("experience") or [])
+
+    # Contacts safety
+    contacts = cv.get("contacts") or {}
+    cv["contacts"] = {
+        "email": str(contacts.get("email") or ""),
+        "phone": str(contacts.get("phone") or ""),
+        "location": str(contacts.get("location") or ""),
+        "links": [str(x).strip() for x in (contacts.get("links") or []) if str(x).strip()][:10],
+    }
+
+    # Skills trimming
+    cv["skills"] = [str(s).strip() for s in (cv.get("skills") or []) if str(s).strip()][:30]
+
+    # Education/projects/languages pass-through (optional: similar normalization)
+    for k in ("education", "projects", "languages"):
+        if k not in cv or not isinstance(cv[k], list):
+            cv[k] = []
+
+    # Strings fallback
+    for k in ("fullName", "title", "summary"):
+        cv[k] = str(cv.get(k) or "")
+
+    return cv
+
 @app.post("/api/extract-cv")
 def extract_cv(body: ExtractIn):
     system = "You are a CV extractor. Output strictly valid JSON conforming to the provided schema."
-    user = f"""Convert the user's free text into the CV schema. 
+    user = f"""Convert the user's free text into the CV schema.
+
 Rules:
-- JSON only (no prose).
-- 2–5 bullets per role, action + result, ≤ 20 words each.
-- Do not invent dates/employers; omit if unknown.
-- Use ISO dates (YYYY or YYYY-MM) when present.
+- JSON ONLY (no prose).
+- Emit exactly one experience item per distinct role@company mentioned. Do NOT split a single internship/job into multiple entries.
+- Dates MUST be either "YYYY" or "YYYY-MM" only. Never include day or time.
+- If the user writes a range like "2024-2025", set start="2024", end="2025".
+- If month is unknown, use just "YYYY".
+- Do NOT invent employers or dates. Omit unknown fields.
+- Bullets: 2–5 items, action + outcome, ≤ 20 words each.
 
 User text:
 \"\"\"{body.free_text}\"\"\""""
-    return _gemini_json_call(system, user, CV_JSON_SCHEMA)
+    raw = _gemini_json_call(system, user, CV_JSON_SCHEMA)
+    return _normalize_cv(raw)
 
 @app.post("/api/improve-cv")
 def improve_cv(body: ImproveIn):
@@ -254,4 +381,5 @@ Current CV:
 
 Job (optional, for tailoring):
 \"\"\"{body.job_text or ""}\"\"\""""
-    return _gemini_json_call(system, user, CV_JSON_SCHEMA)
+    raw = _gemini_json_call(system, user, CV_JSON_SCHEMA)
+    return _normalize_cv(raw)

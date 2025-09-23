@@ -1,4 +1,5 @@
 import { api } from "../components/client";
+import { CvData } from "./types";
 
 export interface GenerateResponse {
     output?: string;
