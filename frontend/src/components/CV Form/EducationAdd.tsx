@@ -21,6 +21,8 @@ const EducationAdd: React.FC<Props> = ({ onAdd }) => {
     end: null as Date | null,
   });
 
+  const [endOpen, setEndOpen] = useState(false);
+
   const add = () => {
     const item = {
       school: draft.school.trim(),
@@ -31,6 +33,7 @@ const EducationAdd: React.FC<Props> = ({ onAdd }) => {
     if (!item.school || !item.program) return;
     onAdd(item);
     setDraft({ school: "", program: "", start: null, end: null });
+    setEndOpen(false);
   };
 
   return (
@@ -48,20 +51,32 @@ const EducationAdd: React.FC<Props> = ({ onAdd }) => {
         onChange={(e) => setDraft((s) => ({ ...s, program: e.target.value }))}
       />
 
-      <div className={styles.row2}>
+ <div className={styles.row2}>
         <DatePicker
           selected={draft.start}
-          onChange={(date) => setDraft((s) => ({ ...s, start: date }))}
+          onChange={(date) => {
+            setDraft((s) => ({ ...s, start: date }));
+            if (date) setEndOpen(true);           // <-- open End after picking Start
+          }}
           placeholderText="Start date"
           dateFormat="yyyy-MM-dd"
-          portalId="datepicker-portal"
         />
+
         <DatePicker
           selected={draft.end}
-          onChange={(date) => setDraft((s) => ({ ...s, end: date }))}
+          onChange={(date) => {
+            setDraft((s) => ({ ...s, end: date }));
+            setEndOpen(false);                    // close once user picks End
+          }}
           placeholderText="End date"
           dateFormat="yyyy-MM-dd"
-          portalId="datepicker-portal"
+          open={endOpen}                          // <-- controlled
+          onCalendarClose={() => setEndOpen(false)}
+          onInputClick={() => setEndOpen(true)}
+          onFocus={() => setEndOpen(true)} 
+          shouldCloseOnSelect                     // close on day click
+          popperClassName="dp-popper"             // keep your earlier fix
+          portalId="datepicker-portal"            // or use your portal if set
         />
       </div>
 

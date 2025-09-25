@@ -4,6 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { toYMD, bulletsFromTextarea } from "./cvUtils";
 
+
 type Props = {
   onAdd: (item: {
     role: string;
@@ -25,6 +26,8 @@ const ExperienceAdd: React.FC<Props> = ({ onAdd }) => {
     tech: "",
   });
 
+  const [endOpen, setEndOpen] = useState(false);
+  
   const add = () => {
     const item = {
       role: draft.role.trim(),
@@ -57,16 +60,28 @@ const ExperienceAdd: React.FC<Props> = ({ onAdd }) => {
       <div className={styles.row2}>
         <DatePicker
           selected={draft.start}
-          onChange={(date) => setDraft((s) => ({ ...s, start: date }))}
+          onChange={(date) => {
+            setDraft((s) => ({ ...s, start: date }));
+            if (date) setEndOpen(true);
+          }}
           placeholderText="Start date"
           dateFormat="yyyy-MM-dd"
-          portalId="datepicker-portal"
         />
+
         <DatePicker
           selected={draft.end}
-          onChange={(date) => setDraft((s) => ({ ...s, end: date }))}
+          onChange={(date) => {
+            setDraft((s) => ({ ...s, end: date }));
+            setEndOpen(false);
+          }}
           placeholderText="End date"
           dateFormat="yyyy-MM-dd"
+          open={endOpen}
+          onCalendarClose={() => setEndOpen(false)}
+          onInputClick={() => setEndOpen(true)}
+          onFocus={() => setEndOpen(true)} 
+          shouldCloseOnSelect
+          popperClassName="dp-popper"
           portalId="datepicker-portal"
         />
       </div>
