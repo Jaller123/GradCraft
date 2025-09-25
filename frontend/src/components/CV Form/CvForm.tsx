@@ -4,6 +4,7 @@ import { CvData } from "../types";
 
 import BasicInfoSection from "./BasicInfoSection";
 import ExperienceList from "./ExperienceList";
+import EducationList from "./EducationList"
 import SkillsInput from "./SkillsInput";
 
 type Props = {
@@ -20,6 +21,7 @@ const CvForm: React.FC<Props> = ({ value, onChange }) => {
       <form className={styles.form}>
         <BasicInfoSection value={value} set={set} />
         <ExperienceList value={value} set={set} />
+        <EducationList value={value} set={set} />
         <SkillsInput value={value} set={set} />
 
         {/* TODO: add Education, Projects, Languages sections the same way */}

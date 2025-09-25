@@ -1,24 +1,22 @@
 import React, { useState } from "react";
 import styles from "../styles/CvForm.module.css";
-import ExperienceItem from "./ExperienceItem";
-import ExperienceAdd from "././ExperienceAdd";
-import { toYMD, bulletsFromTextarea } from "./cvUtils";
-import { CvEducation, CvData } from "../types";
+import EducationItem from "./EducationItem";
+import EducationAdd from "./EducationAdd";
+import { toYMD } from "./cvUtils";
+import { CvData } from "../types";
 
 type Props = {
   value: CvData;
   set: <K extends keyof CvData>(k: K, v: CvData[K]) => void;
 };
 
-const ExperienceList: React.FC<Props> = ({ value, set }) => {
+const EducationList: React.FC<Props> = ({ value, set }) => {
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editDraft, setEditDraft] = useState<{
-    role: string;
-    company: string;
+    school: string;
+    program: string;
     start: Date | null;
     end: Date | null;
-    bullets: string;
-    tech: string;
   } | null>(null);
 
   const beginEdit = (index: number, draft: NonNullable<typeof editDraft>) => {
@@ -33,40 +31,38 @@ const ExperienceList: React.FC<Props> = ({ value, set }) => {
 
   const saveEdit = (index: number, draft: NonNullable<typeof editDraft>) => {
     const updated = {
-      role: draft.role.trim(),
-      company: draft.company.trim(),
+      school: draft.school.trim(),
+      program: draft.program.trim(),
       start: toYMD(draft.start),
       end: toYMD(draft.end),
-      bullets: bulletsFromTextarea(draft.bullets),
-      tech: draft.tech.split(",").map((s) => s.trim()).filter(Boolean),
     };
-    if (!updated.role || !updated.company) return;
-    const next = value.experience.slice();
+    if (!updated.school || !updated.program) return;
+    const next = value.education.slice();
     next[index] = updated;
-    set("experience", next);
+    set("education", next);
     setEditIndex(null);
     setEditDraft(null);
   };
 
   const remove = (index: number) => {
-    const next = value.experience.slice();
+    const next = value.education.slice();
     next.splice(index, 1);
-    set("experience", next);
+    set("education", next);
     if (editIndex === index) cancelEdit();
   };
 
-  const add = (item: CvData["experience"][number]) => {
-    set("experience", [...value.experience, item]);
+  const add = (item: CvData["education"][number]) => {
+    set("education", [...value.education, item]);
   };
 
   return (
     <div className={styles.field}>
-      <label className={styles.label}>Experience</label>
+      <label className={styles.label}>Education</label>
 
-      {value.experience.map((exp, i) => (
-        <ExperienceItem
+      {value.education.map((edu, i) => (
+        <EducationItem
           key={i}
-          exp={exp}
+          edu={edu}
           index={i}
           isEditing={editIndex === i}
           editDraft={editDraft}
@@ -77,10 +73,9 @@ const ExperienceList: React.FC<Props> = ({ value, set }) => {
         />
       ))}
 
-      {/* Add new experience */}
-      <ExperienceAdd onAdd={add} />
+      <EducationAdd onAdd={add} />
     </div>
   );
 };
 
-export default ExperienceList;
+export default EducationList;

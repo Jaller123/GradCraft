@@ -116,8 +116,8 @@ const Chatbot: React.FC<Props> = ({ onCvExtract }) => {
           onChange={(e) => setInput(e.target.value)}
           rows={4}
           placeholder={`Example: 
-"I'm {name}, newly graduated {Job in} (June 2025) from Jensen YH in Kista, Stockholm. 
-Built an AMS mock API tool with React, Node.js, MySQL, Docker, Cypress. Languages: English & Swedish."`}
+"I'm (name), graduated as (exam/diploma) from (School), (City). 
+I've worked at ... (June 2025 - May 2028)"`}
           onKeyDown={(e) => {
             if ((e.ctrlKey || e.metaKey) && e.key === "Enter") send();
           }}
@@ -127,7 +127,7 @@ Built an AMS mock API tool with React, Node.js, MySQL, Docker, Cypress. Language
           onClick={send}
           disabled={!input.trim() || loading}
         >
-          {loading ? "Working..." : "Send"}
+          {loading ? "Loading..." : "Send"}
         </button>
       </div>
 

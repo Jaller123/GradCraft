@@ -2,20 +2,18 @@ import React from "react";
 import styles from "../styles/CvForm.module.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { bulletsToTextarea, parseYearOrYearMonth } from "./cvUtils";
-import { CvExperience } from "../types";
+import { parseYearOrYearMonth } from "./cvUtils";
+import { CvEducation } from "../types";
 
 type EditDraft = {
-  role: string;
-  company: string;
+  school: string;
+  program: string;
   start: Date | null;
   end: Date | null;
-  bullets: string;
-  tech: string;
 };
 
 type Props = {
-  exp: CvExperience;
+  edu: CvEducation;
   index: number;
   isEditing: boolean;
   editDraft: EditDraft | null;
@@ -25,23 +23,23 @@ type Props = {
   onRemove: (index: number) => void;
 };
 
-const ExperienceItem: React.FC<Props> = ({
-  exp, index, isEditing, editDraft, onBeginEdit, onCancel, onSave, onRemove
+const EducationItem: React.FC<Props> = ({
+  edu, index, isEditing, editDraft, onBeginEdit, onCancel, onSave, onRemove
 }) => {
   if (isEditing && editDraft) {
     return (
       <div className={styles.card}>
         <input
           className={styles.input}
-          placeholder="Role"
-          value={editDraft.role}
-          onChange={(e) => onBeginEdit(index, { ...editDraft, role: e.target.value })}
+          placeholder="School"
+          value={editDraft.school}
+          onChange={(e) => onBeginEdit(index, { ...editDraft, school: e.target.value })}
         />
         <input
           className={styles.input}
-          placeholder="Company"
-          value={editDraft.company}
-          onChange={(e) => onBeginEdit(index, { ...editDraft, company: e.target.value })}
+          placeholder="Program / Degree"
+          value={editDraft.program}
+          onChange={(e) => onBeginEdit(index, { ...editDraft, program: e.target.value })}
         />
 
         <div className={styles.row2}>
@@ -61,26 +59,8 @@ const ExperienceItem: React.FC<Props> = ({
           />
         </div>
 
-        <textarea
-          className={styles.textarea}
-          rows={4}
-          placeholder="Bullets (one per line)"
-          value={editDraft.bullets}
-          onChange={(e) => onBeginEdit(index, { ...editDraft, bullets: e.target.value })}
-        />
-        <input
-          className={styles.input}
-          placeholder="Tech (comma separated)"
-          value={editDraft.tech}
-          onChange={(e) => onBeginEdit(index, { ...editDraft, tech: e.target.value })}
-        />
-
         <div className={styles.btnRow}>
-          <button
-            type="button"
-            className={styles.btnPrimary}
-            onClick={() => onSave(index, editDraft)}
-          >
+          <button type="button" className={styles.btnPrimary} onClick={() => onSave(index, editDraft)}>
             Save
           </button>
           <button type="button" className={styles.btnGhost} onClick={onCancel}>
@@ -98,17 +78,9 @@ const ExperienceItem: React.FC<Props> = ({
   return (
     <div className={styles.card}>
       <div>
-        <strong>{exp.role}</strong> @ {exp.company}
+        <strong>{edu.program}</strong> @ {edu.school}
       </div>
-      <div>{exp.start || "—"} – {exp.end || "Present"}</div>
-
-      {exp.bullets?.length > 0 && (
-        <ul className={styles.list}>
-          {exp.bullets.map((b, bi) => (
-            <li key={bi}>{b}</li>
-          ))}
-        </ul>
-      )}
+      <div>{edu.start || "—"} – {edu.end || "Present"}</div>
 
       <div className={styles.btnRow}>
         <button
@@ -116,12 +88,10 @@ const ExperienceItem: React.FC<Props> = ({
           className={styles.btnPrimary}
           onClick={() =>
             onBeginEdit(index, {
-              role: exp.role,
-              company: exp.company,
-              start: parseYearOrYearMonth(exp.start),
-              end: parseYearOrYearMonth(exp.end),
-              bullets: bulletsToTextarea(exp.bullets || []),
-              tech: (exp.tech || []).join(", "),
+              school: edu.school,
+              program: edu.program,
+              start: parseYearOrYearMonth(edu.start),
+              end: parseYearOrYearMonth(edu.end),
             })
           }
         >
@@ -135,4 +105,4 @@ const ExperienceItem: React.FC<Props> = ({
   );
 };
 
-export default ExperienceItem;
+export default EducationItem;

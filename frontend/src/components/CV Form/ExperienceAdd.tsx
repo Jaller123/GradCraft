@@ -60,18 +60,20 @@ const ExperienceAdd: React.FC<Props> = ({ onAdd }) => {
           onChange={(date) => setDraft((s) => ({ ...s, start: date }))}
           placeholderText="Start date"
           dateFormat="yyyy-MM-dd"
+          portalId="datepicker-portal"
         />
         <DatePicker
           selected={draft.end}
           onChange={(date) => setDraft((s) => ({ ...s, end: date }))}
           placeholderText="End date"
           dateFormat="yyyy-MM-dd"
+          portalId="datepicker-portal"
         />
       </div>
 
       <textarea
         className={styles.textarea}
-        placeholder={`Bullets (one per line)\nExample:\n- Built feature X\n- Improved load time by 40%`}
+        placeholder={`Job Description`}
         rows={4}
         value={draft.bullets}
         onChange={(e) => setDraft((s) => ({ ...s, bullets: e.target.value }))}

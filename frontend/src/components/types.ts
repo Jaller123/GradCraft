@@ -1,4 +1,20 @@
 // types.ts
+export type CvExperience = {
+  role: string;
+  company: string;
+  start?: string;
+  end?: string;
+  bullets: string[];
+  tech: string[];
+};
+
+export type CvEducation = {
+  school: string;
+  program: string;
+  start?: string;
+  end?: string;
+};
+
 export type CvData = {
   fullName: string;
   title: string;
@@ -10,15 +26,8 @@ export type CvData = {
     links?: string[];
   };
   skills: string[];
-  experience: {
-    role: string;
-    company: string;
-    start?: string;
-    end?: string;
-    bullets: string[];
-    tech: string[];
-  }[];
-  education: { school: string; program: string; start?: string; end?: string }[];
+  experience: CvExperience[];
+  education: CvEducation[];
   projects: { name: string; url?: string; bullets: string[] }[];
   languages: { name: string; level: string }[];
 };
