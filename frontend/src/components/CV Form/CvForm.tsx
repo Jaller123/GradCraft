@@ -10,10 +10,11 @@ import ContactInput from "./ContactInput";
 
 type Props = {
   value: CvData;
-  onChange: (next: CvData) => void;
+  onChange: React.Dispatch<React.SetStateAction<CvData>>; 
+  onContinue?: () => void;                                
 };
 
-const CvForm: React.FC<Props> = ({ value, onChange }) => {
+const CvForm: React.FC<Props> = ({ value, onChange, onContinue }) => {
   const set = <K extends keyof CvData>(k: K, v: CvData[K]) =>
     onChange({ ...value, [k]: v });
 
@@ -25,8 +26,11 @@ const CvForm: React.FC<Props> = ({ value, onChange }) => {
         <EducationList value={value} set={set} />
         <SkillsInput value={value} set={set} />
         <ContactInput value={value} set={set} />
-
-        {/* TODO: add Education, Projects, Languages sections the same way */}
+           {onContinue && (
+          <div style={{ marginTop: 12 }}>
+            <button type="button" onClick={onContinue}>Save &amp; Continue →</button>
+          </div>
+        )}
       </form>
     </div>
   );

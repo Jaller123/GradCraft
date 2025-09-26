@@ -30,5 +30,4 @@ export type CvData = {
   education: CvEducation[];
   projects: { name: string; url?: string; bullets: string[] }[];
   languages: { name: string; level: string }[];
-  contact: string[]
 };

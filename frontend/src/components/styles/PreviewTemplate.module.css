@@ -1,0 +1,40 @@
+.pageWrap { padding: 24px; display:flex; flex-direction:column; gap:16px; align-items:center; }
+.resume {
+  width: 850px; max-width: 100%;
+  background: #fff; color: #111; padding: 40px 48px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.12); border-radius: 12px;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+.header { margin-bottom: 18px; }
+.name { letter-spacing: 6px; font-weight: 700; font-size: 32px; margin: 0; }
+.role { font-style: italic; color: #666; margin-top: 4px; }
+
+.body { display: grid; grid-template-columns: 280px 1fr; gap: 40px; }
+.block { margin-bottom: 20px; }
+.blockTitle { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: #333; margin: 0 0 10px; }
+.bullets { margin: 6px 0 0 18px; }
+.summary { margin: 0; color: #333; line-height: 1.55; }
+.sidebar { border-right: 1px solid #eee; padding-right: 24px; }
+.contactList { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+
+.eduItem { margin-bottom: 10px; }
+.eduSchool { font-weight: 600; }
+.eduProgram { color: #444; font-size: 14px; }
+.eduDates { color: #666; font-size: 12px; }
+
+.expItem { margin-bottom: 16px; }
+.expHead { display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: baseline; }
+.expRole { font-weight: 700; }
+.expCompany { color: #444; font-size: 14px; }
+.expDates { color: #666; font-size: 12px; }
+
+.actions { display:flex; gap:10px; }
+.btnPrimary { background:#111; color:#fff; border:none; padding:10px 16px; border-radius:10px; cursor:pointer; }
+.btnGhost { background:transparent; border:1px solid #ddd; padding:10px 16px; border-radius:10px; cursor:pointer; }
+
+/* Print */
+@media print {
+  .pageWrap { padding: 0; }
+  .resume { box-shadow: none; border-radius: 0; width: 100%; }
+  .actions { display: none; }
+}
