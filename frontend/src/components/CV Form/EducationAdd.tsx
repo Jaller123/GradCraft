@@ -60,6 +60,7 @@ const EducationAdd: React.FC<Props> = ({ onAdd }) => {
           }}
           placeholderText="Start date"
           dateFormat="yyyy-MM-dd"
+          portalId="datepicker-portal"
         />
 
         <DatePicker
