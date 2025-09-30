@@ -26,11 +26,13 @@ const CvForm: React.FC<Props> = ({ value, onChange, onContinue }) => {
         <EducationList value={value} set={set} />
         <SkillsInput value={value} set={set} />
         <ContactInput value={value} set={set} />
-           {onContinue && (
-          <div style={{ marginTop: 12 }}>
-            <button type="button" onClick={onContinue}>Save &amp; Continue →</button>
-          </div>
-        )}
+          {onContinue && (
+            <div className={styles.continueBar}>
+              <button type="button" className={styles.btnPrimary} onClick={onContinue}>
+                Save &amp; Continue →
+              </button>
+            </div>
+          )}
       </form>
     </div>
   );

@@ -21,9 +21,22 @@ const PreviewPage: React.FC = () => {
   const cv = useCvData();
   const navigate = useNavigate();
 
-  const handleDownload = () => {
-    // simplest: use the browser print dialog with print CSS
-    window.print();
+ const handleDownloadPdf = async () => {
+  const el = document.querySelector(`.${styles.resume}`) as HTMLElement;
+if (!el) return;
+
+const html2pdf = (await import("html2pdf.js")).default;
+
+const opts = {
+  margin: 0,
+  filename: (cv.fullName?.trim() || "CV") + ".pdf",
+  image: { type: "jpeg", quality: 0.98 },
+  html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+  jsPDF: { unit: "pt", format: "a4", orientation: "portrait" },
+  pagebreak: { mode: ["css", "legacy"] }, // <- valid runtime option
+} as any; // <-- tell TS to chill about extra fields
+
+html2pdf().set(opts).from(el).save();
   };
 
   return (
@@ -122,7 +135,7 @@ const PreviewPage: React.FC = () => {
       {/* Actions */}
       <div className={styles.actions}>
         <button onClick={() => navigate(-1)} className={styles.btnGhost}>← Back & Edit</button>
-        <button onClick={handleDownload} className={styles.btnPrimary}>Download / Print</button>
+        <button onClick={handleDownloadPdf} className={styles.btnPrimary}>Download Resume</button>
       </div>
     </div>
   );

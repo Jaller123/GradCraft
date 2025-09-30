@@ -22,7 +22,6 @@ export default function CvBuilderPage() {
   return (
     <div>
         <CvForm value={cv} onChange={setCv} onContinue={saveAndContinue} />
-        <button onClick={saveAndContinue}>Save & Continue →</button>
     </div>
   );
 }

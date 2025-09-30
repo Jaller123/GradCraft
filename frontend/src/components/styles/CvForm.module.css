@@ -82,7 +82,16 @@
   color: white;
 }
 
-
+.continueBar {
+  position: sticky;
+  bottom: 0;
+  padding-top: 8px;
+  background: linear-gradient(to top, rgba(22,24,47,0.95), rgba(22,24,47,0));
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 4px;
+  z-index: 1;
+}
 
 /* ====== Experience cards (each added item) ====== */
 .card {
