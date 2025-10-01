@@ -1,37 +1,82 @@
 .navbar {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: rgba(16, 13, 36, 0.78);
-  backdrop-filter: blur(6px);
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.container {
-  max-width: 72rem;
-  margin: 0 auto;
-  padding: 0.75rem 1rem;
+  background: #111528;            /* dark background */
+  color: #fff;
+  padding: 12px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  width: 100%;
 }
 
 .brand {
-  font-weight: 600;
-  font-size: 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0ae0e0;
+  margin-right: 2rem;
+  letter-spacing: 1px;
+  cursor: pointer;
 }
 
 .links {
   display: flex;
+  list-style: none;
   gap: 1rem;
-  font-size: 0.875rem;
+  margin: 0;
+  padding: 0;
 }
 
 .link {
+  color: #fff;
   text-decoration: none;
-  color: #ffffff;
+  font-weight: 500;
+  transition: color 0.2s ease;
 }
 
 .link:hover {
-  text-decoration: underline;
+  color: #0ae0e0;
+}
+
+/* CV Switcher + Button */
+.cvActions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.cvSelect {
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: #1a1f36;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.cvSelect option {
+  background: #1a1f36;
+  color: #fff;
+}
+
+.newCvBtn {
+  border: 1px solid rgba(255,255,255,0.3);
+  background: transparent;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.newCvBtn:hover {
+  background: #0ae0e0;
+  color: #111528;
 }

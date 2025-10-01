@@ -5,9 +5,10 @@ import CvForm from "./components/CV Form/CvForm";
 import Chatbot from "./components/CV Form/ChatBot";
 import PreviewPage from "./components/CV Form/PreviewPage";
 import StartHero from "./components/StartHero";
+import SavedCvsPage from "./components/SavedCVsPage";
 import styles from "./App.module.css";
 import { useNavigate } from "react-router-dom";
-// ✅ import the shared type
+import { getCurrent, createCv, saveCurrentCv } from "./components/CvStore";
 import { CvData } from "./components/types";
 
 
@@ -73,31 +74,20 @@ function CvPage() {
 const STORAGE_KEY = "cv_draft_v1";
 
 const [cv, setCv] = useState<CvData>(() => {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (saved) {
-    try {
-      return normalizeCv(JSON.parse(saved));
-    } catch {
-      return EMPTY_CV;
-    }
-  }
-  return EMPTY_CV;
-});
+    const rec = getCurrent();
+    return rec?.data ?? EMPTY_CV;
+  });
+
 
 const navigate = useNavigate();
 
 
-React.useEffect(() => {
-  const id = setTimeout(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(cv));
-  }, 250);
-  return () => clearTimeout(id);
-}, [cv]);
+React.useEffect(() => { saveCurrentCv(cv); }, [cv]);
 
-const saveAndContinue = () => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(cv));
-  navigate("/preview", { state: { cv } });
-};
+  const saveAndContinue = () => {
+    saveCurrentCv(cv);
+    navigate("/preview", { state: { cv } });
+  };
 
   return (
     <main className={styles.main}>
@@ -121,6 +111,7 @@ export default function App() {
         <Route path="/cv" element={<CvPage />} />
         {/* <Route path="/recruiters" element={<Recruiters />} /> */}
         <Route path="/preview" element={<PreviewPage />} />
+          <Route path="/saved" element={<SavedCvsPage />} />
       </Routes>
     </Router>
   );
