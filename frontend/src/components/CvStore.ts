@@ -5,7 +5,7 @@ import type { CvData } from "./types";
 
 const STORE_KEY = "cv_store_v1";
 
-export type CvRecord = { id: string; title: string; data: CvData; updatedAt: number };
+export type CvRecord = { id: string; title: string; data: CvData; updatedAt: number; thumbDataUrl?: string };
 export type CvStore  = { currentId?: string; items: Record<string, CvRecord> };
 
 const emptyStore: CvStore = { items: {} };
@@ -40,9 +40,21 @@ export function createCv(title: string, data: CvData): CvRecord {
   const rec: CvRecord = { id, title: title.trim() || "Untitled CV", data, updatedAt: Date.now() };
   s.items[id] = rec; s.currentId = id; save(s); return rec;
 }
-export function saveCurrentCv(data: CvData) {
+export function saveCurrentCv(data: CvData, thumbDataUrl?: string) {
   const s = load(); const id = s.currentId; if (!id) return;
-  const prev = s.items[id]; s.items[id] = { ...prev, data, updatedAt: Date.now() }; save(s);
+  const prev = s.items[id];
+  s.items[id] = {
+    ...prev,
+    data,
+    updatedAt: Date.now(),
+    ...(thumbDataUrl ? { thumbDataUrl } : {}),
+  };
+  save(s);
+}
+export function setCurrentTitle(title: string) {
+  const s = load(); const id = s.currentId; if (!id) return;
+  s.items[id] = { ...s.items[id], title, updatedAt: Date.now() };
+  save(s);
 }
 export function renameCv(id: string, title: string) {
   const s = load(); const rec = s.items[id]; if (!rec) return;

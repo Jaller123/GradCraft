@@ -31,6 +31,26 @@ const Chatbot: React.FC<Props> = ({ onCvExtract }) => {
     } catch {}
   }, [messages]);
 
+  useEffect(() => {
+  if (messages.length === 0) {
+    setMessages([
+      {
+        id: uid(),
+        role: "assistant",
+        content: `👋 Hi! Tell me your background and I’ll fill out the CV form for you.
+
+Try to include:
+- Full name, title, and location
+- Education (school, program, start–end)
+- Experience (role, company, dates, description, tech)
+- Skills (comma separated)
+- Contact info (email, phone, links)`,
+        ts: Date.now(),
+      },
+    ]);
+  }
+}, []);
+
   const send = async () => {
     const text = input.trim();
     if (!text || loading) return;

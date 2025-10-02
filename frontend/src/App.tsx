@@ -8,7 +8,7 @@ import StartHero from "./components/StartHero";
 import SavedCvsPage from "./components/SavedCVsPage";
 import styles from "./App.module.css";
 import { useNavigate } from "react-router-dom";
-import { getCurrent, createCv, saveCurrentCv } from "./components/CvStore";
+import { getCurrent, createCv, saveCurrentCv, renameCv } from "./components/CvStore";
 import { CvData } from "./components/types";
 
 
@@ -69,20 +69,43 @@ function mergeCv(prev: CvData, incoming: Partial<CvData>): CvData {
   };
 }
 
+function titleFrom(cv: CvData) {
+  return (cv.fullName && `${cv.fullName} – ${cv.title || "CV"}`) || "Untitled CV";
+}
+
 function CvPage() {
 
 const STORAGE_KEY = "cv_draft_v1";
+
 
 const [cv, setCv] = useState<CvData>(() => {
     const rec = getCurrent();
     return rec?.data ?? EMPTY_CV;
   });
-
-
 const navigate = useNavigate();
 
 
-React.useEffect(() => { saveCurrentCv(cv); }, [cv]);
+React.useEffect(() => {
+    const rec = getCurrent();
+    if (!rec) {
+      createCv(titleFrom(cv), cv);
+    }
+  // run once on mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  React.useEffect(() => {
+    saveCurrentCv(cv);
+  }, [cv]);
+
+  React.useEffect(() => {
+    const rec = getCurrent();
+    if (!rec) return;
+    const nextTitle = titleFrom(cv);
+    if (nextTitle && nextTitle !== rec.title) {
+      renameCv(rec.id, nextTitle);
+    }
+  }, [cv.fullName, cv.title]);
 
   const saveAndContinue = () => {
     saveCurrentCv(cv);

@@ -2,6 +2,21 @@ import React, { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styles from "../styles/PreviewTemplate.module.css";
 import type { CvData } from "../types";
+import html2canvas from "html2canvas";
+import { saveCurrentCv } from "../CvStore"
+
+async function captureThumbnailFromPreview(): Promise<string | undefined> {
+  const el = document.querySelector(`.${styles.resume}`) as HTMLElement | null;
+  if (!el) return;
+
+  // Smaller width → lightweight dataURL for gallery cards
+  const canvas = await html2canvas(el, {
+  scale: 0.6,  // ✅ works at runtime
+  useCORS: true,
+  scrollY: 0
+  } as any);
+  return canvas.toDataURL("image/png", 0.9);
+}
 
 const useCvData = (): CvData => {
   const nav = useLocation();
@@ -20,6 +35,19 @@ const useCvData = (): CvData => {
 const PreviewPage: React.FC = () => {
   const cv = useCvData();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+  (async () => {
+    const thumb = await captureThumbnailFromPreview();
+    if (thumb) {
+      // If you’re on multi-CV: persist the thumbnail with the active record
+      try { saveCurrentCv(cv, thumb); } catch {}
+      // If you’re still on single draft key, also stash a quick copy:
+      try { localStorage.setItem("cv_draft_thumb_v1", thumb); } catch {}
+    }
+  })();
+}, [cv]);
+
 
  const handleDownloadPdf = async () => {
   const el = document.querySelector(`.${styles.resume}`) as HTMLElement;
