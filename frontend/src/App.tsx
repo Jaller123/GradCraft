@@ -8,7 +8,7 @@ import StartHero from "./components/StartHero";
 import SavedCvsPage from "./components/SavedCVsPage";
 import styles from "./App.module.css";
 import { useNavigate } from "react-router-dom";
-import { getCurrent, createCv, saveCurrentCv, renameCv } from "./components/CvStore";
+import { getCurrent, getCurrentId, createCv, saveCurrentCv, renameCv } from "./components/CvStore";
 import { CvData } from "./components/types";
 
 
@@ -76,26 +76,22 @@ function titleFrom(cv: CvData) {
 function CvPage() {
 
 const STORAGE_KEY = "cv_draft_v1";
-
-
-const [cv, setCv] = useState<CvData>(() => {
-    const rec = getCurrent();
-    return rec?.data ?? EMPTY_CV;
-  });
 const navigate = useNavigate();
+const currentId = getCurrent()?.id;   
+const [cv, setCv] = useState<CvData>(() => {
+  return getCurrentId()
+    ? (getCurrent()?.data ?? EMPTY_CV)
+    : EMPTY_CV;
+});
 
 
-React.useEffect(() => {
-    const rec = getCurrent();
-    if (!rec) {
-      createCv(titleFrom(cv), cv);
-    }
+
   // run once on mount
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
 
   React.useEffect(() => {
-    saveCurrentCv(cv);
+    if (getCurrentId()) saveCurrentCv(cv);
   }, [cv]);
 
   React.useEffect(() => {
@@ -107,7 +103,12 @@ React.useEffect(() => {
     }
   }, [cv.fullName, cv.title]);
 
+  
   const saveAndContinue = () => {
+    const id = getCurrentId();
+    if (!id) {
+      createCv(titleFrom(cv), cv)
+    }
     saveCurrentCv(cv);
     navigate("/preview", { state: { cv } });
   };

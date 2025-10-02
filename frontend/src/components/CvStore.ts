@@ -69,3 +69,9 @@ export function loadCv(id: string): CvData | null {
   const s = load(); const rec = s.items[id]; if (!rec) return null;
   s.currentId = id; save(s); return rec.data;
 }
+
+export function clearCurrent() {
+  const s = load();
+  delete s.currentId;
+  save (s)
+}

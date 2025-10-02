@@ -18,7 +18,7 @@ export default function CvBuilderPage() {
 
   const saveAndContinue = () => {
     // (optional) keep your single-draft copy
-    localStorage.setItem("cv_draft_v1", JSON.stringify(cv));
+   
 
     const current = getCurrent();
     if (!current) {
