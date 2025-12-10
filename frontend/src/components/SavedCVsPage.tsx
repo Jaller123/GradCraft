@@ -35,12 +35,12 @@ const SavedCvsPage: React.FC = () => {
               </div>
 
               <div className={styles.actions}>
-                <button onClick={() => { setCurrent(rec.id); nav("/cv"); }}>Open</button>
-                <button onClick={() => {
+                <button className={styles.btnOpen} onClick={() => { setCurrent(rec.id); nav("/cv"); }}>Open</button>
+                <button className={styles.btnRename} onClick={() => {
                   const next = prompt("Rename CV", rec.title);
                   if (next != null) { renameCv(rec.id, next); setTick(t => t + 1); }
                 }}>Rename</button>
-                <button onClick={() => { if (confirm("Delete this CV?")) { deleteCv(rec.id); setTick(t => t + 1); } }}>Delete</button>
+                <button className={styles.btnDelete} onClick={() => { if (confirm("Delete this CV?")) { deleteCv(rec.id); setTick(t => t + 1); } }}>Delete</button>
               </div>
             </div>
           ))}

@@ -28,6 +28,26 @@
 
 .actions { display:flex; gap: 8px; padding: 10px 12px 12px; }
 .actions button {
-  background: #f8f8f8; color:#111; border:1px solid #ddd; border-radius: 8px; padding: 6px 10px; cursor: pointer;
+  border:1px solid #ddd; border-radius: 8px; padding: 6px 10px; cursor: pointer;
 }
-.actions button:hover { background: #e9e9e9; }
+
+.btnOpen{
+  background: #008f0c; color: #ffffff; border: none; 
+}
+.btnRename{
+  background: #aebf16; color: #000000; border: none; 
+}
+.btnDelete{
+  background: #a60000; color: #fdfdfd; border: none; 
+}
+.btnOpen:hover { background: #00ff15; color: #7d7d7d}
+.btnRename:hover { background: #e8ff1c; }
+.btnDelete:hover { background: #ff0000; }
+
+.pdfExport {
+  background: #fff !important;
+  color: #111 !important;
+}
+.pdfExport * {
+  color: #111 !important;
+}

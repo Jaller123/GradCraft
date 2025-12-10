@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styles from "../styles/PreviewTemplate.module.css";
 import type { CvData } from "../types";
-import html2canvas from "html2canvas";
 import { saveCurrentCv } from "../CvStore"
 
 async function captureThumbnailFromPreview(): Promise<string | undefined> {
@@ -51,121 +50,93 @@ const PreviewPage: React.FC = () => {
 
  const handleDownloadPdf = async () => {
   const el = document.querySelector(`.${styles.resume}`) as HTMLElement;
+  window.print();
 if (!el) return;
 
-const html2pdf = (await import("html2pdf.js")).default;
 
 const opts = {
   margin: 0,
   filename: (cv.fullName?.trim() || "CV") + ".pdf",
   image: { type: "jpeg", quality: 0.98 },
   html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
-  jsPDF: { unit: "pt", format: "a4", orientation: "portrait" },
+ 
   pagebreak: { mode: ["css", "legacy"] }, // <- valid runtime option
 } as any; // <-- tell TS to chill about extra fields
 
-html2pdf().set(opts).from(el).save();
   };
 
   return (
-    <div className={styles.pageWrap}>
-      <div className={`${styles.resume} print-resume`}>
+ <div className={styles.pageWrap}>
+  <div className={`${styles.resume} print-resume`}>
+    <header className={styles.header}>
+      <h1 className={styles.name}>{cv.fullName || "John Smith"}</h1>
+      <div className={styles.role}>{cv.title || "Developer"}</div>
+    </header>
 
-        {/* Header */}
-        <header className={styles.header}>
-          <h1 className={styles.name}>{cv.fullName || "Your Name"}</h1>
-          {cv.title && <div className={styles.role}>{cv.title}</div>}
-        </header>
+    <div className={styles.columns}>
+      <aside className={styles.sidebar}>
+        <section className={styles.block}>
+          <div className={styles.label}>CONTACT</div>
+          {cv.contacts?.phone && <div className={styles.row}><span className={styles.icon}>☎</span><span>{cv.contacts.phone}</span></div>}
+          {cv.contacts?.email && <div className={styles.row}><span className={styles.icon}>✉</span><span>{cv.contacts.email}</span></div>}
+          {cv.contacts?.location && <div className={styles.row}><span className={styles.icon}>📍</span><span>{cv.contacts.location}</span></div>}
+          {(cv.contacts?.links || []).map((l, i) => (
+            <div className={styles.row} key={i}><span className={styles.icon}>🌐</span><span>{l}</span></div>
+          ))}
+        </section>
 
-        <div className={styles.body}>
-          {/* Sidebar */}
-          <aside className={styles.sidebar}>
-            {/* CONTACT */}
-            <section className={styles.block}>
-              <h3 className={styles.blockTitle}>Contact</h3>
-              <ul className={styles.contactList}>
-                {cv.contacts?.phone && <li>📞 {cv.contacts.phone}</li>}
-                {cv.contacts?.email && <li>✉️ {cv.contacts.email}</li>}
-                {cv.contacts?.location && <li>📍 {cv.contacts.location}</li>}
-                {cv.contacts?.links?.map((l, i) => <li key={i}>🌐 {l}</li>)}
-              </ul>
-            </section>
+        {cv.education?.length > 0 && (
+          <section className={styles.block}>
+            <div className={styles.label}>EDUCATION</div>
+            {cv.education.map((e, i) => (
+              <div key={i} className={styles.eduItem}>
+                <div className={styles.eduSchool}>{e.school}</div>
+                <div className={styles.eduDates}>{(e.start || "") + (e.end ? " – " + e.end : "")}</div>
+                <div className={styles.eduProgram}>{e.program}</div>
+              </div>
+            ))}
+          </section>
+        )}
 
-            {/* EDUCATION */}
-            {cv.education?.length > 0 && (
-              <section className={styles.block}>
-                <h3 className={styles.blockTitle}>Education</h3>
-                {cv.education.map((e, i) => (
-                  <div key={i} className={styles.eduItem}>
-                    <div className={styles.eduSchool}>{e.school}</div>
-                    <div className={styles.eduDates}>{(e.start || "—") + " – " + (e.end || "Present")}</div>
-                    <div className={styles.eduProgram}>{e.program}</div>
-                  </div>
-                ))}
-              </section>
-            )}
+        {cv.skills?.length > 0 && (
+          <section className={styles.block}>
+            <div className={styles.label}>SKILLS</div>
+            <div>{cv.skills.join(", ")}</div>
+          </section>
+        )}
+      </aside>
 
-            {/* AWARDS (optional placeholder; map from projects or your own field) */}
-            {cv.projects?.length > 0 && (
-              <section className={styles.block}>
-                <h3 className={styles.blockTitle}>Awards & Certifications</h3>
-                <ul className={styles.bullets}>
-                  {cv.projects.slice(0,3).map((p,i) => <li key={i}>{p.name}</li>)}
-                </ul>
-              </section>
-            )}
+      <div className={styles.main}>
+        <section className={styles.block}>
+          <div className={styles.label}>PROFILE</div>
+          <p className={styles.summary}>{cv.summary || "Newly Graduated Developer"}</p>
+        </section>
 
-            {/* SKILLS */}
-            {cv.skills?.length > 0 && (
-              <section className={styles.block}>
-                <h3 className={styles.blockTitle}>Skills</h3>
-                <ul className={styles.bullets}>
-                  {cv.skills.map((s, i) => <li key={i}>{s}</li>)}
-                </ul>
-              </section>
-            )}
-          </aside>
-
-          {/* Main */}
-          <main className={styles.main}>
-            {/* PROFILE / SUMMARY */}
-            {cv.summary && (
-              <section className={styles.block}>
-                <h3 className={styles.blockTitle}>Profile</h3>
-                <p className={styles.summary}>{cv.summary}</p>
-              </section>
-            )}
-
-            {/* EXPERIENCE */}
-            {cv.experience?.length > 0 && (
-              <section className={styles.block}>
-                <h3 className={styles.blockTitle}>Work Experience</h3>
-                {cv.experience.map((e, i) => (
-                  <div key={i} className={styles.expItem}>
-                    <div className={styles.expHead}>
-                      <div className={styles.expRole}>{e.role}</div>
-                      <div className={styles.expCompany}>{e.company}</div>
-                      <div className={styles.expDates}>{(e.start || "—") + " – " + (e.end || "Present")}</div>
-                    </div>
-                    {e.bullets?.length > 0 && (
-                      <ul className={styles.bullets}>
-                        {e.bullets.map((b, bi) => <li key={bi}>{b}</li>)}
-                      </ul>
-                    )}
-                  </div>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-
-      {/* Actions */}
-      <div className={styles.actions}>
-        <button onClick={() => navigate(-1)} className={styles.btnGhost}>← Back & Edit</button>
-        <button onClick={handleDownloadPdf} className={styles.btnPrimary}>Download Resume</button>
+        {cv.experience?.length > 0 && (
+          <section className={styles.block}>
+            <div className={styles.label}>WORK EXPERIENCE</div>
+            {cv.experience.map((e, i) => (
+              <div key={i} className={styles.expItem}>
+                <div className={styles.expHead}>
+                  <div className={styles.expRole}>{e.role}</div>
+                  <div className={styles.expCompany}>{e.company}</div>
+                </div>
+                <div className={styles.expDates}>{(e.start || "") + (e.end ? " – " + e.end : "")}</div>
+                <p className={styles.expText}>{e.bullets?.join(" ")}</p>
+              </div>
+            ))}
+          </section>
+        )}
       </div>
     </div>
+  </div>
+
+  <div className={styles.actions}>
+    <button onClick={() => navigate(-1)} className={styles.btnGhost}>Back & Edit</button>
+    <button onClick={handleDownloadPdf} className={styles.btnPrimary}>Download PDF</button>
+  </div>
+</div>
+
   );
 };
 
