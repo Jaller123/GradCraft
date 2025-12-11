@@ -10,9 +10,9 @@ from typing import Optional, Dict, Any, List, Tuple
 
 
 load_dotenv(dotenv_path=find_dotenv(), override=False)
-
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 app = FastAPI()
 app.add_middleware(
@@ -41,24 +41,42 @@ SEED_SCHEMA = {
   "additionalProperties": False
 }
 
-def gemini_json(system: str, user: str, schema: dict):
+def _groq_chat(
+    messages: List[Dict[str, str]],
+    schema: Optional[Dict[str, Any]] = None,
+    timeout: int = 45,
+):
     key = get_api_key()
-    payload = {
-        "systemInstruction": {"parts": [{"text": system}]},
-        "generationConfig": {"response_mime_type":"application/json","response_schema": schema},
-        "contents": [{"parts": [{"text": user}]}]
-    }
+    payload: Dict[str, Any] = {"model": GROQ_MODEL, "messages": messages}
+
+    if schema:
+        payload["response_format"] = {
+            "type": "json_schema",
+            "json_schema": {"name": "cv", "strict": True, "schema": schema},
+        }
+    else:
+        payload["response_format"] = {"type": "json_object"}
+
     r = requests.post(
-        GEMINI_URL,
-        headers={"Content-Type": "application/json","x-goog-api-key": key},
-        json=payload, timeout=30
+        GROQ_URL,
+        headers={"Content-Type": "application/json", "Authorization": f"Bearer {key}"},
+        json=payload,
+        timeout=timeout,
     )
     if not r.ok:
         raise HTTPException(r.status_code, r.text)
     data = r.json()
-    text = data.get("candidates",[{}])[0].get("content",{}).get("parts",[{}])[0].get("text","")
+    text = data.get("choices", [{}])[0].get("message", {}).get("content", "")
     if not text:
         raise HTTPException(502, "Empty AI response")
+    return text
+
+def gemini_json(system: str, user: str, schema: dict):
+    text = _groq_chat(
+        [{"role": "system", "content": system}, {"role": "user", "content": user}],
+        schema=schema,
+        timeout=30,
+    )
     try:
         return json.loads(text)
     except Exception:
@@ -94,13 +112,24 @@ Bio: {body.bio.strip()}
     return cv
 
 def get_api_key() -> str:
-    v = os.getenv("GEMINI_API_KEY")
+    v = GROQ_API_KEY
     if not v:
-        raise HTTPException(500, "GEMINI_API_KEY not set")
+        raise HTTPException(500, "GROQ_API_KEY not set")
     return v
+
 
 @app.post("/api/generate")
 def generate(body: PromptIn):
+    if not GROQ_API_KEY:
+        raise HTTPException(500, "GROQ_API_KEY not set")
+    try:
+        text = _groq_chat([{"role": "user", "content": body.prompt}], timeout=30)
+        return {"output": text or "[empty]"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
     if not GEMINI_API_KEY:
         raise HTTPException(500, "GEMINI_API_KEY not set")
     try:
@@ -206,6 +235,36 @@ class ImproveIn(BaseModel):
     job_text: str | None = ""
 
 def _gemini_json_call(system_instruction: str, user_prompt: str, schema: dict):
+    if not GROQ_API_KEY:
+        raise HTTPException(500, "GROQ_API_KEY not set")
+    text = _groq_chat(
+        [
+            {"role": "system", "content": system_instruction},
+            {"role": "user", "content": user_prompt},
+        ],
+        schema=schema,
+        timeout=45,
+    )
+    try:
+        return json.loads(text)
+    except Exception:
+        raise HTTPException(502, "Model returned non-JSON output")
+
+    if not GROQ_API_KEY:
+        raise HTTPException(500, "GROQ_API_KEY not set")
+    text = _groq_chat(
+        [
+            {"role": "system", "content": system_instruction},
+            {"role": "user", "content": user_prompt},
+        ],
+        response_format={"type": "json_object"},
+        timeout=45,
+    )
+    try:
+        return json.loads(text)
+    except Exception:
+        raise HTTPException(502, "Model returned non-JSON output")
+
     if not GEMINI_API_KEY:
         raise HTTPException(500, "GEMINI_API_KEY not set")
     payload = {
