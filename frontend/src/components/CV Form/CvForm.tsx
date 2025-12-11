@@ -4,14 +4,14 @@ import { CvData } from "../types";
 
 import BasicInfoSection from "./BasicInfoSection";
 import ExperienceList from "./ExperienceList";
-import EducationList from "./EducationList"
+import EducationList from "./EducationList";
 import SkillsInput from "./SkillsInput";
 import ContactInput from "./ContactInput";
 
 type Props = {
   value: CvData;
-  onChange: React.Dispatch<React.SetStateAction<CvData>>; 
-  onContinue?: () => void;                                
+  onChange: React.Dispatch<React.SetStateAction<CvData>>;
+  onContinue?: () => void;
 };
 
 const CvForm: React.FC<Props> = ({ value, onChange, onContinue }) => {
@@ -26,13 +26,13 @@ const CvForm: React.FC<Props> = ({ value, onChange, onContinue }) => {
         <EducationList value={value} set={set} />
         <SkillsInput value={value} set={set} />
         <ContactInput value={value} set={set} />
-          {onContinue && (
-            <div className={styles.continueBar}>
-              <button type="button" className={styles.btnPrimary} onClick={onContinue}>
-                Save &amp; Continue →
-              </button>
-            </div>
-          )}
+        {onContinue && (
+          <div className={styles.continueBar}>
+            <button type="button" className={styles.btnPrimary} onClick={onContinue}>
+              Save &amp; Continue &gt;
+            </button>
+          </div>
+        )}
       </form>
     </div>
   );

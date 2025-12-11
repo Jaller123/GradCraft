@@ -33,16 +33,19 @@
   filter: hue-rotate(260deg) saturate(0.9) contrast(0.95) brightness(0.55);
 }
 
-/* Dark blue/purple tint overlay */
+/* Dark blue/purple tint overlay plus the CV page gradient theme */
 .tint {
   position: absolute;
   inset: 0;
   z-index: -1;
-  /* Layer a dark navy with a soft blue/purple gradient glow */
+  /* Layer a dark navy base with the same teal/pink radial washes from CV form */
   background:
+    radial-gradient(circle at 20% 20%, rgba(30, 60, 120, 0.38), transparent 40%),
+    radial-gradient(circle at 82% 8%, rgba(180, 60, 120, 0.30), transparent 34%),
+    radial-gradient(circle at 62% 72%, rgba(10, 160, 160, 0.28), transparent 38%),
     radial-gradient(1000px 600px at 70% -10%, rgba(0, 106, 255, 0.12), transparent 60%),
     radial-gradient(900px 550px at 20% -20%, rgba(58, 0, 249, 0.1), transparent 60%),
-    linear-gradient(180deg, rgba(36, 30, 87, 0.78), rgba(10,8,24,0.84));
+    linear-gradient(180deg, rgba(12, 15, 28, 0.96), rgba(10, 8, 24, 0.92));
 }
 
 .inner {
@@ -119,6 +122,16 @@
     radial-gradient(700px 400px at 50% -10%, rgba(104,226,194,.14), transparent 65%);
   pointer-events: none;
   z-index: 0;
+}
+
+/* Soft grain to match CV page texture */
+.noise {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+  opacity: 0.55;
 }
 
 /* Reduce motion */

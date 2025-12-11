@@ -25,6 +25,7 @@ const StartHero: React.FC<Props> = ({ onCreateCvClick, onRecruitersClick }) => {
 
       {/* Tint overlay */}
       <div className={styles.tint} aria-hidden />
+      <div className={styles.noise} aria-hidden />
       <div className={styles.inner}>
           <h1 id="hero-title" className={styles.title}>
           <span className={styles.heroText}>
