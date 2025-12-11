@@ -11,7 +11,15 @@
 
 .body { display: grid; grid-template-columns: 280px 1fr; gap: 40px; }
 .block { margin-bottom: 20px; }
-.blockTitle { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: #333; margin: 0 0 10px; }
+.blockTitle {
+  font-size: 13px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #0f0f0f;
+  margin: 0 0 12px;
+  font-weight: 800;
+  line-height: 1.3;
+}
 .bullets { margin: 6px 0 0 18px; }
 .summary { margin: 0; color: #333; line-height: 1.55; }
 .sidebar { border-right: 1px solid #eee; padding-right: 24px; }
