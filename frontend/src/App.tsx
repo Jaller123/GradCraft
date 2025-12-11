@@ -5,6 +5,7 @@ import CvForm from "./components/CV Form/CvForm";
 import Chatbot from "./components/CV Form/ChatBot";
 import PreviewPage from "./components/CV Form/PreviewPage";
 import StartHero from "./components/StartHero";
+import ScrollStory from "./components/ScrollStory";
 import SavedCvsPage from "./components/SavedCVsPage";
 import styles from "./App.module.css";
 import { useNavigate } from "react-router-dom";
@@ -126,12 +127,21 @@ const [cv, setCv] = useState<CvData>(() => {
   );
 }
 
+function HomePage() {
+  return (
+    <>
+      <StartHero />
+      <ScrollStory />
+    </>
+  );
+}
+
 export default function App() {
   return (
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/" element={<StartHero />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/cv" element={<CvPage />} />
         {/* <Route path="/recruiters" element={<Recruiters />} /> */}
         <Route path="/preview" element={<PreviewPage />} />
