@@ -1,17 +1,23 @@
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import styles from "./styles/ScrollStory.module.css";
+import resumeImg from "../assets/resume.png";
+import cvFormImg from "../assets/CVForm.jpg";
 
 const blocks = [
   {
     title: "Tell your story",
     body:
       "Drop your background in plain language. We listen for roles, dates, schools, and projects so you don't have to wrestle with forms first.",
+    imageSrc: resumeImg,
+    imageAlt: "Chatbot and CV form awaiting your details",
   },
   {
     title: "AI fills the form",
     body:
       "The chatbot lifts your details into structured fields instantly so you can tweak and export a job-ready CV faster than hand-filling forms.",
+    imageSrc: cvFormImg,
+    imageAlt: "Finished CV after the assistant structures your info",
   },
 ];
 
@@ -42,6 +48,14 @@ const ScrollStory: React.FC = () => {
             >
               <p className={styles.kicker}>{item.title}</p>
               <p className={styles.body}>{item.body}</p>
+              <motion.div
+                className={styles.imageWrap}
+                initial={{ opacity: 0, y: 18 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+                transition={{ duration: 0.6, delay: 0.2 + 0.15 * idx, ease: "easeOut" }}
+              >
+                <img src={item.imageSrc} alt={item.imageAlt} className={styles.image} />
+              </motion.div>
             </motion.div>
           ))}
         </div>
