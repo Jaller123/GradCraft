@@ -2,7 +2,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv, find_dotenv
-from app.api.routes import ai, auth
+from app.api.routes import ai, auth, resumes
 
 load_dotenv(dotenv_path=find_dotenv(), override=False)
 
@@ -17,6 +17,7 @@ def create_app() -> FastAPI:
     )
     app.include_router(ai.router)
     app.include_router(auth.router)
+    app.include_router(resumes.router)
     return app
 
 

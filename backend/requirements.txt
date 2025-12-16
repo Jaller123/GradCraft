@@ -6,3 +6,4 @@ requests
 pydantic-settings
 httpx
 python-jose
+supabase
