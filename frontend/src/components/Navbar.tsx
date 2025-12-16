@@ -29,6 +29,7 @@ const Navbar: React.FC = () => {
           >CV Builder</Link></li>
           <li><Link to="/saved" className={styles.link}>Saved CVs</Link></li>
           <li><a href="#recruiters" className={styles.link}>Recruiters</a></li>
+          <li><Link to="/login" className={styles.link}>Login</Link></li>
         </ul>
 
         <div className={styles.cvActions}>

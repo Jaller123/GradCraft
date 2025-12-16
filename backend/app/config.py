@@ -8,8 +8,9 @@ class Settings(BaseSettings):
     groq_url: str = "https://api.groq.com/openai/v1/chat/completions"
 
     # Supabase (optional; for auth/persistence if you add it later)
-    supabase_url: str | None = os.getenv("SUPABASE_URL")
-    supabase_anon_key: str | None = os.getenv("SUPABASE_ANON_KEY")
+    supabase_url: str | None = os.getenv("SUPABASE_URL") or os.getenv("VITE_SUPABASE_URL")
+    supabase_anon_key: str | None = os.getenv("SUPABASE_ANON_KEY") or os.getenv("VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY")
     supabase_service_role: str | None = os.getenv("SUPABASE_SERVICE_ROLE")
+    supabase_audience: str = os.getenv("SUPABASE_AUDIENCE", "authenticated")
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")

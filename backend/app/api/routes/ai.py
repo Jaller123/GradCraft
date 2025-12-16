@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from models.schemas import PromptIn, SeedIn, ExtractIn, ImproveIn, CV_JSON_SCHEMA
 from services.ai_client import groq_chat, generate_json
 from services.cv_normalizer import normalize_cv
-from app.deps import settings_dep
+from app.deps import settings_dep, current_user
 
 router = APIRouter(prefix="/api", tags=["ai"])
 
@@ -48,7 +48,7 @@ Bio: {body.bio.strip()}
 
 
 @router.post("/extract-cv")
-def extract_cv(body: ExtractIn, settings=Depends(settings_dep)):
+def extract_cv(body: ExtractIn, settings=Depends(settings_dep), user=Depends(current_user)):
     system = "You are a CV extractor. Output strictly valid JSON conforming to the provided schema."
     user = f"""Convert the user's free text into the CV schema.
 
@@ -68,7 +68,7 @@ User text:
 
 
 @router.post("/improve-cv")
-def improve_cv(body: ImproveIn, settings=Depends(settings_dep)):
+def improve_cv(body: ImproveIn, settings=Depends(settings_dep), user=Depends(current_user)):
     system = "You are a CV editor. Improve clarity and impact, keep facts. JSON only, same schema as input."
     user = f"""Improve the following CV JSON for concision and impact. Keep the same keys/shape.
 Current CV:

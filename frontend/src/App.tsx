@@ -6,6 +6,7 @@ import Chatbot from "./components/CV Form/ChatBot";
 import PreviewPage from "./components/CV Form/PreviewPage";
 import StartHero from "./components/StartHero";
 import ScrollStory from "./components/ScrollStory";
+import LoginPage from "./components/Auth/LoginPage";
 import SavedCvsPage from "./components/SavedCVsPage";
 import styles from "./App.module.css";
 import { useNavigate } from "react-router-dom";
@@ -146,6 +147,7 @@ export default function App() {
         {/* <Route path="/recruiters" element={<Recruiters />} /> */}
         <Route path="/preview" element={<PreviewPage />} />
           <Route path="/saved" element={<SavedCvsPage />} />
+          <Route path="/login" element={<LoginPage />} />
       </Routes>
     </Router>
   );
