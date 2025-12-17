@@ -8,6 +8,7 @@ import StartHero from "./components/StartHero";
 import ScrollStory from "./components/ScrollStory";
 import LoginPage from "./components/Auth/LoginPage";
 import SavedCvsPage from "./components/SavedCVsPage";
+import Footer from "./components/Footer";
 import styles from "./App.module.css";
 import { useNavigate } from "react-router-dom";
 import { getCurrent, createCv, saveCurrentCv, setCurrent, loadCv, getCurrentId } from "./components/CvStore";
@@ -169,6 +170,7 @@ export default function App() {
           <Route path="/saved" element={<SavedCvsPage />} />
           <Route path="/login" element={<LoginPage />} />
       </Routes>
+      <Footer />
     </Router>
   );
 }
