@@ -1,4 +1,5 @@
 import time
+import logging
 import httpx
 from jose import jwt
 from fastapi import HTTPException
@@ -7,6 +8,7 @@ from typing import Dict, Any
 from app.config import Settings
 
 _jwks_cache: Dict[str, Any] = {"keys": None, "ts": 0}
+logger = logging.getLogger(__name__)
 
 
 async def get_jwks(settings: Settings):
@@ -36,6 +38,12 @@ async def get_jwks(settings: Settings):
         try:
             resp.raise_for_status()
         except httpx.HTTPStatusError as exc:
+            logger.warning(
+                "JWKS fetch failed: %s %s (url=%s)",
+                exc.response.status_code,
+                exc.response.reason_phrase,
+                exc.request.url,
+            )
             raise HTTPException(
                 503,
                 f"Failed to fetch JWKS ({exc.response.status_code} {exc.response.reason_phrase}); "
@@ -84,4 +92,5 @@ async def verify_supabase_token(token: str, settings: Settings) -> Dict[str, Any
         except Exception as exc:  # pragma: no cover - defensive
             last_error = exc
 
+    logger.warning("Supabase token verification failed: %s", last_error)
     raise HTTPException(401, f"Invalid token: {last_error or 'verification failed'}")
