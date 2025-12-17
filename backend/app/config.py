@@ -12,5 +12,6 @@ class Settings(BaseSettings):
     supabase_anon_key: str | None = os.getenv("SUPABASE_ANON_KEY") or os.getenv("VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY")
     supabase_service_role: str | None = os.getenv("SUPABASE_SERVICE_ROLE")
     supabase_audience: str = os.getenv("SUPABASE_AUDIENCE", "authenticated")
+    supabase_jwt_secret: str | None = os.getenv("SUPABASE_JWT_SECRET")
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")

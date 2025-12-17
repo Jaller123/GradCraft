@@ -1,14 +1,13 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import html2canvas from "html2canvas";
 import styles from "../styles/PreviewTemplate.module.css";
 import type { CvData } from "../types";
-import { saveCurrentCv } from "../CvStore";
+import { saveCurrentCv, getCurrent } from "../CvStore";
 
 async function captureThumbnailFromPreview(): Promise<string | undefined> {
   const el = document.querySelector(`.${styles.resume}`) as HTMLElement | null;
   if (!el) return;
-
   const canvas = await html2canvas(el, {
     scale: 0.6,
     useCORS: true,
@@ -17,49 +16,47 @@ async function captureThumbnailFromPreview(): Promise<string | undefined> {
   return canvas.toDataURL("image/png", 0.9);
 }
 
-const useCvData = (): CvData => {
-  const nav = useLocation();
-  const fromState = (nav.state as any)?.cv as CvData | undefined;
-  return useMemo(() => {
-    if (fromState) return fromState;
-    const raw = localStorage.getItem("cv_draft_v1");
-    return raw
-      ? JSON.parse(raw)
-      : {
-          fullName: "",
-          title: "",
-          summary: "",
-          contacts: { email: "", phone: "", location: "", links: [] },
-          skills: [],
-          experience: [],
-          education: [],
-          projects: [],
-          languages: [],
-        };
-  }, [fromState]);
+const EMPTY: CvData = {
+  fullName: "",
+  title: "",
+  summary: "",
+  contacts: { email: "", phone: "", location: "", links: [] },
+  skills: [],
+  experience: [],
+  education: [],
+  projects: [],
+  languages: [],
 };
 
 const PreviewPage: React.FC = () => {
-  const cv = useCvData();
+  const nav = useLocation();
+  const fromState = (nav.state as any)?.cv as CvData | undefined;
+  const [cv, setCv] = React.useState<CvData | null>(fromState || null);
   const navigate = useNavigate();
 
   React.useEffect(() => {
+    if (fromState) return;
+    (async () => {
+      const rec = await getCurrent();
+      setCv(rec?.data || EMPTY);
+    })();
+  }, [fromState]);
+
+  React.useEffect(() => {
+    if (!cv) return;
     (async () => {
       const thumb = await captureThumbnailFromPreview();
       if (thumb) {
         try {
           saveCurrentCv(cv, thumb);
-        } catch {}
-        try {
-          localStorage.setItem("cv_draft_thumb_v1", thumb);
-        } catch {}
+        } catch {
+          /* ignore */
+        }
       }
     })();
   }, [cv]);
 
-  const handleDownloadPdf = () => {
-    window.print();
-  };
+  const handleDownloadPdf = () => window.print();
 
   const formatDates = (start?: string, end?: string) => {
     const startText = start || "";
@@ -68,6 +65,14 @@ const PreviewPage: React.FC = () => {
     if (startText && endText) return `${startText} – ${endText}`;
     return startText || endText;
   };
+
+  if (!cv) {
+    return (
+      <div className={styles.pageWrap}>
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.pageWrap}>
@@ -101,7 +106,7 @@ const PreviewPage: React.FC = () => {
               )}
               {(cv.contacts?.links || []).map((l, i) => (
                 <div className={styles.row} key={i}>
-                  <span className={styles.icon}>🌐</span>
+                  <span className={styles.icon}>🔗</span>
                   <span>{l}</span>
                 </div>
               ))}

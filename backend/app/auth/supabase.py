@@ -16,26 +16,72 @@ async def get_jwks(settings: Settings):
 
     if not settings.supabase_url:
         raise HTTPException(500, "SUPABASE_URL not set")
+    if not settings.supabase_anon_key:
+        raise HTTPException(500, "SUPABASE_ANON_KEY not set")
 
-    jwks_url = f"{settings.supabase_url}/auth/v1/jwks"
+    # Supabase exposes JWKS at /auth/v1/keys (legacy) or /.well-known/jwks.json (fallback)
+    primary_url = f"{settings.supabase_url}/auth/v1/keys"
+    fallback_url = f"{settings.supabase_url}/.well-known/jwks.json"
+
     async with httpx.AsyncClient() as client:
-        r = await client.get(jwks_url, timeout=10)
-        r.raise_for_status()
-        data = r.json()
-        _jwks_cache["keys"] = data["keys"]
+        # Try primary endpoint first
+        resp = await client.get(
+            primary_url,
+            headers={"apikey": settings.supabase_anon_key},
+            timeout=10,
+        )
+        if resp.status_code == 404:
+            resp = await client.get(fallback_url, timeout=10)
+
+        try:
+            resp.raise_for_status()
+        except httpx.HTTPStatusError as exc:
+            raise HTTPException(
+                503,
+                f"Failed to fetch JWKS ({exc.response.status_code} {exc.response.reason_phrase}); "
+                "check SUPABASE_URL/SUPABASE_ANON_KEY",
+            )
+
+        data = resp.json()
+        keys = data.get("keys") or data  # fallback shape if jwks.json returns the array root
+        if not keys:
+            raise HTTPException(503, "JWKS response empty")
+
+        _jwks_cache["keys"] = keys
         _jwks_cache["ts"] = now
         return _jwks_cache["keys"]
 
 
 async def verify_supabase_token(token: str, settings: Settings) -> Dict[str, Any]:
-    jwks = await get_jwks(settings)
+    last_error: Exception | None = None
+
+    # Try RS256 (hosted JWKS)
     try:
-        payload = jwt.decode(
+        jwks = await get_jwks(settings)
+        return jwt.decode(
             token,
             jwks,
             algorithms=["RS256"],
             audience=settings.supabase_audience,
         )
-    except Exception as e:
-        raise HTTPException(401, f"Invalid token: {e}")
-    return payload
+    except HTTPException as exc:
+        # If JWKS cannot be fetched (e.g., 404), fall back to HS256 if secret is set
+        if exc.status_code != 503:
+            raise
+        last_error = exc
+    except Exception as exc:  # pragma: no cover - defensive
+        last_error = exc
+
+    # Fallback: HS256 using Supabase JWT secret (many projects default to HS256)
+    if settings.supabase_jwt_secret:
+        try:
+            return jwt.decode(
+                token,
+                settings.supabase_jwt_secret,
+                algorithms=["HS256"],
+                audience=settings.supabase_audience,
+            )
+        except Exception as exc:  # pragma: no cover - defensive
+            last_error = exc
+
+    raise HTTPException(401, f"Invalid token: {last_error or 'verification failed'}")

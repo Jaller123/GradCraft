@@ -1,13 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { listCvs, setCurrent, renameCv, deleteCv } from "./CvStore";
+import { listCvs, setCurrent, renameCv, deleteCv, CvRecord } from "./CvStore";
 import styles from "../components/styles/SaveCVsPage.module.css";
 
 const SavedCvsPage: React.FC = () => {
   const nav = useNavigate();
-  const [tick, setTick] = React.useState(0);
-  const cvs = React.useMemo(() => listCvs(), [tick]);
-  const items = React.useMemo(() => listCvs(), [tick]);
+  const [items, setItems] = useState<CvRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        const data = await listCvs();
+        setItems(data);
+      } catch (e: any) {
+        setError(e?.message || "Failed to load CVs");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   return (
 <div className={styles.wrap}>
@@ -17,7 +31,9 @@ const SavedCvsPage: React.FC = () => {
         {/* <button className={styles.newBtn} onClick={...}>+ New CV</button> */}
       </div>
 
-      {items.length === 0 ? (
+      {loading && <p className={styles.empty}>Loading...</p>}
+      {!loading && error && <p className={styles.empty}>{error}</p>}
+      {!loading && !error && items.length === 0 ? (
         <p className={styles.empty}>No saved CVs yet.</p>
       ) : (
         <div className={styles.grid}>
@@ -31,16 +47,26 @@ const SavedCvsPage: React.FC = () => {
 
               <div className={styles.meta}>
                 <div className={styles.cardTitle} title={rec.title}>{rec.title}</div>
-                <div className={styles.time}>Edited {new Date(rec.updatedAt).toLocaleDateString()}</div>
+                <div className={styles.time}>
+                  Edited {new Date(rec.updatedAt ?? Date.now()).toLocaleDateString()}
+                </div>
               </div>
 
               <div className={styles.actions}>
-                <button className={styles.btnOpen} onClick={() => { setCurrent(rec.id); nav("/cv"); }}>Open</button>
-                <button className={styles.btnRename} onClick={() => {
+                <button className={styles.btnOpen} onClick={() => { setCurrent(rec.id); nav("/cv", { state: { resumeId: rec.id } }); }}>Open</button>
+                <button className={styles.btnRename} onClick={async () => {
                   const next = prompt("Rename CV", rec.title);
-                  if (next != null) { renameCv(rec.id, next); setTick(t => t + 1); }
+                  if (next != null) {
+                    await renameCv(rec.id, next);
+                    setItems(await listCvs());
+                  }
                 }}>Rename</button>
-                <button className={styles.btnDelete} onClick={() => { if (confirm("Delete this CV?")) { deleteCv(rec.id); setTick(t => t + 1); } }}>Delete</button>
+                <button className={styles.btnDelete} onClick={async () => {
+                  if (confirm("Delete this CV?")) {
+                    await deleteCv(rec.id);
+                    setItems(await listCvs());
+                  }
+                }}>Delete</button>
               </div>
             </div>
           ))}

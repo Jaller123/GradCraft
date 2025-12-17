@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import CvForm from "./components/CV Form/CvForm";
 import Chatbot from "./components/CV Form/ChatBot";
@@ -10,7 +10,7 @@ import LoginPage from "./components/Auth/LoginPage";
 import SavedCvsPage from "./components/SavedCVsPage";
 import styles from "./App.module.css";
 import { useNavigate } from "react-router-dom";
-import { getCurrent, getCurrentId, createCv, saveCurrentCv, renameCv } from "./components/CvStore";
+import { getCurrent, createCv, saveCurrentCv, setCurrent, loadCv } from "./components/CvStore";
 import { CvData } from "./components/types";
 
 
@@ -76,43 +76,56 @@ function titleFrom(cv: CvData) {
 }
 
 function CvPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const resumeId = (location.state as any)?.resumeId as string | undefined;
+  const [cv, setCv] = useState<CvData>(EMPTY_CV);
+  const [currentId, setCurrentId] = useState<string | undefined>(resumeId);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-const STORAGE_KEY = "cv_draft_v1";
-const navigate = useNavigate();
-const currentId = getCurrent()?.id;   
-const [cv, setCv] = useState<CvData>(() => {
-  return getCurrentId()
-    ? (getCurrent()?.data ?? EMPTY_CV)
-    : EMPTY_CV;
-});
-
-
-
-  // run once on mount
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-
-
+  // Load existing resume only when editing (resumeId provided)
   React.useEffect(() => {
-    if (getCurrentId()) saveCurrentCv(cv);
-  }, [cv]);
+    (async () => {
+      try {
+        setLoading(true);
+        if (resumeId) {
+          const data = await loadCv(resumeId);
+          if (data) {
+            setCv(data);
+            setCurrent(resumeId);
+            setCurrentId(resumeId);
+          } else {
+            setCv(EMPTY_CV);
+          }
+        } else {
+          setCv(EMPTY_CV);
+        }
+      } catch (e: any) {
+        setError(e?.message || "Failed to load CV");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [resumeId]);
 
-  React.useEffect(() => {
-    const rec = getCurrent();
-    if (!rec) return;
-    const nextTitle = titleFrom(cv);
-    if (nextTitle && nextTitle !== rec.title) {
-      renameCv(rec.id, nextTitle);
-    }
-  }, [cv.fullName, cv.title]);
-
-  
   const saveAndContinue = () => {
-    const id = getCurrentId();
-    if (!id) {
-      createCv(titleFrom(cv), cv)
-    }
-    saveCurrentCv(cv);
-    navigate("/preview", { state: { cv } });
+    (async () => {
+      try {
+        let id = currentId;
+        if (!id) {
+          const rec = await createCv(titleFrom(cv), cv);
+          id = rec.id;
+          setCurrentId(id);
+          setCurrent(id);
+        } else {
+          await saveCurrentCv(cv);
+        }
+        navigate("/preview", { state: { cv } });
+      } catch (e) {
+        setError((e as any)?.message || "Save failed");
+      }
+    })();
   };
 
   return (
@@ -121,7 +134,13 @@ const [cv, setCv] = useState<CvData>(() => {
         <Chatbot onCvExtract={(json) => setCv((prev) => mergeCv(prev, json))} />
         <div>
           <h2 className={styles.heading}>Your CV</h2>
-          <CvForm value={cv} onChange={setCv} onContinue={saveAndContinue} />
+          {loading ? (
+            <p>Loading...</p>
+          ) : error ? (
+            <p>{error}</p>
+          ) : (
+            <CvForm value={cv} onChange={setCv} onContinue={saveAndContinue} />
+          )}
         </div>
       </div>
     </main>

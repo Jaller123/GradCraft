@@ -1,18 +1,10 @@
 import React from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { listCvs, setCurrent, createCv, clearCurrent } from "./CvStore";
-import type { CvData } from "./types";
+import { clearCurrent } from "./CvStore";
 import styles from "./styles/Navbar.module.css";
-
-const EMPTY: CvData = {
-  fullName: "", title: "", summary: "",
-  contacts: { email:"", phone:"", location:"", links:[] },
-  skills: [], experience: [], education: [], projects: [], languages: []
-};
 
 const Navbar: React.FC = () => {
   const nav = useNavigate();
-  const cvs = listCvs();
 
   return (
     <nav className={styles.navbar}>
