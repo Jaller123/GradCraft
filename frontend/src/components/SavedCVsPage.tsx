@@ -8,6 +8,7 @@ const SavedCvsPage: React.FC = () => {
   const [items, setItems] = useState<CvRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -61,12 +62,26 @@ const SavedCvsPage: React.FC = () => {
                     setItems(await listCvs());
                   }
                 }}>Rename</button>
-                <button className={styles.btnDelete} onClick={async () => {
-                  if (confirm("Delete this CV?")) {
-                    await deleteCv(rec.id);
-                    setItems(await listCvs());
-                  }
-                }}>Delete</button>
+                <button
+                  className={styles.btnDelete}
+                  disabled={deletingId === rec.id}
+                  onClick={async () => {
+                    if (!confirm("Delete this CV?")) return;
+                    setDeletingId(rec.id);
+                    try {
+                      await deleteCv(rec.id);
+                      // Optimistically remove locally so UI updates without a full reload
+                      setItems((prev) => prev.filter((r) => r.id !== rec.id));
+                    } catch (e: any) {
+                      setError(e?.message || "Failed to delete CV");
+                      setItems(await listCvs());
+                    } finally {
+                      setDeletingId(null);
+                    }
+                  }}
+                >
+                  {deletingId === rec.id ? "Deleting..." : "Delete"}
+                </button>
               </div>
             </div>
           ))}

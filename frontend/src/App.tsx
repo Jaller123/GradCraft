@@ -10,7 +10,7 @@ import LoginPage from "./components/Auth/LoginPage";
 import SavedCvsPage from "./components/SavedCVsPage";
 import styles from "./App.module.css";
 import { useNavigate } from "react-router-dom";
-import { getCurrent, createCv, saveCurrentCv, setCurrent, loadCv } from "./components/CvStore";
+import { getCurrent, createCv, saveCurrentCv, setCurrent, loadCv, getCurrentId } from "./components/CvStore";
 import { CvData } from "./components/types";
 
 
@@ -80,7 +80,7 @@ function CvPage() {
   const location = useLocation();
   const resumeId = (location.state as any)?.resumeId as string | undefined;
   const [cv, setCv] = useState<CvData>(EMPTY_CV);
-  const [currentId, setCurrentId] = useState<string | undefined>(resumeId);
+  const [currentId, setCurrentId] = useState<string | undefined>(resumeId || getCurrentId());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -89,12 +89,13 @@ function CvPage() {
     (async () => {
       try {
         setLoading(true);
-        if (resumeId) {
-          const data = await loadCv(resumeId);
+        const targetId = resumeId || getCurrentId();
+        if (targetId) {
+          const data = await loadCv(targetId);
           if (data) {
             setCv(data);
-            setCurrent(resumeId);
-            setCurrentId(resumeId);
+            setCurrent(targetId);
+            setCurrentId(targetId);
           } else {
             setCv(EMPTY_CV);
           }
