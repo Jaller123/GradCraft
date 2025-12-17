@@ -42,7 +42,10 @@
 
 /* Print */
 @media print {
+  @page { margin: 12mm; }
   .pageWrap { padding: 0; }
   .resume { box-shadow: none; border-radius: 0; width: 100%; }
   .actions { display: none; }
+  /* Keep resume header visible even if global print styles hide header tags */
+  .header { display: block !important; }
 }

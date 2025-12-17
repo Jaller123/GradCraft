@@ -33,6 +33,7 @@ const PreviewPage: React.FC = () => {
   const fromState = (nav.state as any)?.cv as CvData | undefined;
   const [cv, setCv] = React.useState<CvData | null>(fromState || null);
   const navigate = useNavigate();
+  const originalTitleRef = React.useRef<string | null>(null);
 
   React.useEffect(() => {
     if (fromState) return;
@@ -41,6 +42,23 @@ const PreviewPage: React.FC = () => {
       setCv(rec?.data || EMPTY);
     })();
   }, [fromState]);
+
+  // Set a friendly document title for print exports
+  React.useEffect(() => {
+    if (!cv) return;
+    if (originalTitleRef.current === null) originalTitleRef.current = document.title;
+    const name = cv.fullName?.trim() || cv.title?.trim() || "Resume";
+    document.title = `CV - ${name}`;
+  }, [cv]);
+
+  // Restore original title on unmount
+  React.useEffect(() => {
+    return () => {
+      if (originalTitleRef.current !== null) {
+        document.title = originalTitleRef.current;
+      }
+    };
+  }, []);
 
   React.useEffect(() => {
     if (!cv) return;
