@@ -6,6 +6,7 @@ import Chatbot from "./components/CV Form/ChatBot";
 import PreviewPage from "./components/CV Form/PreviewPage";
 import StartHero from "./components/StartHero";
 import ScrollStory from "./components/ScrollStory";
+import ModelShowcase from "./components/ModelShowcase";
 import LoginPage from "./components/Auth/LoginPage";
 import SavedCvsPage from "./components/SavedCVsPage";
 import Footer from "./components/Footer";
@@ -154,6 +155,7 @@ function HomePage() {
     <>
       <StartHero />
       <ScrollStory />
+      <ModelShowcase />
     </>
   );
 }
