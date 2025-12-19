@@ -1,0 +1,104 @@
+.footer {
+  background: linear-gradient(180deg, #0c0f1c 0%, #0a0d18 100%);
+  color: #dfe6f5;
+  padding: 48px 24px 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 0.8fr;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.brandCol {
+  display: grid;
+  gap: 12px;
+}
+
+.logoRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logoDot {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: radial-gradient(circle at 30% 30%, #3af7e4, #0ae0e0 45%, #0b7bff 100%);
+  box-shadow: 0 10px 30px rgba(10, 224, 224, 0.3);
+}
+
+.brand {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+.brandMain {
+  color: #e9f6ff;
+}
+
+.brandAccent {
+  color: #0ae0e0;
+}
+
+.tagline {
+  margin: 0;
+  color: #b8c4e3;
+  line-height: 1.6;
+  max-width: 520px;
+}
+
+.linksCol {
+  display: grid;
+  gap: 8px;
+}
+
+.heading {
+  margin: 0 0 4px;
+  font-size: 15px;
+  letter-spacing: 0.3px;
+  color: #e9f6ff;
+}
+
+.link {
+  color: #c7d4f3;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: #0ae0e0;
+}
+
+.meta {
+  max-width: 1200px;
+  margin: 32px auto 0;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  color: #95a3c4;
+  font-size: 13px;
+}
+
+.metaLinks {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  color: #95a3c4;
+}
+
+@media (max-width: 900px) {
+  .inner {
+    grid-template-columns: 1fr;
+  }
+}

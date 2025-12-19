@@ -1,0 +1,53 @@
+.wrap { padding: 24px; max-width: 1200px; margin: 0 auto; color: #fff; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.title { font-size: 1.5rem; font-weight: 700; }
+.empty { opacity: .8; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.card {
+  background: rgba(20,20,35,.55);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 12px;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto auto auto;
+}
+
+.thumbWrap { cursor: pointer; background: #0f1326; aspect-ratio: 4/5; display:flex; align-items:center; justify-content:center; }
+.thumb { width: 100%; height: 100%; object-fit: cover; display:block; }
+.thumbPlaceholder { color: #8aa; font-size: .9rem; }
+
+.meta { padding: 10px 12px 0; }
+.cardTitle { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.time { font-size: 12px; color: #9ab; margin-top: 4px; }
+
+.actions { display:flex; gap: 8px; padding: 10px 12px 12px; }
+.actions button {
+  border:1px solid #ddd; border-radius: 8px; padding: 6px 10px; cursor: pointer;
+}
+
+.btnOpen{
+  background: #008f0c; color: #ffffff; border: none; 
+}
+.btnRename{
+  background: #aebf16; color: #000000; border: none; 
+}
+.btnDelete{
+  background: #a60000; color: #fdfdfd; border: none; 
+}
+.btnOpen:hover { background: #00ff15; color: #7d7d7d}
+.btnRename:hover { background: #e8ff1c; }
+.btnDelete:hover { background: #ff0000; }
+
+.pdfExport {
+  background: #fff !important;
+  color: #111 !important;
+}
+.pdfExport * {
+  color: #111 !important;
+}

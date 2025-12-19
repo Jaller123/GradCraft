@@ -1,0 +1,22 @@
+/* src/components/styles/LoopWords.module.css */
+.mask {
+  overflow: hidden;
+  display: inline-block;      /* inline so it sits inside a sentence */
+  vertical-align: bottom;
+}
+
+.col {
+  will-change: transform;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  /* Match your hero typography */
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  text-transform: none;       /* set to uppercase if you want */
+  color: rgb(255, 222, 222);
+ 
+}
