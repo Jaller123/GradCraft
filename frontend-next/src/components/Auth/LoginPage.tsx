@@ -10,9 +10,11 @@ type AccountType = "student" | "recruiter" | "other";
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
   const [mode, setMode] = useState<Mode>("signin");
   const [status, setStatus] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [verifyNotice, setVerifyNotice] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [accountType, setAccountType] = useState<AccountType | null>(null);
@@ -32,17 +34,32 @@ const LoginPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const hash = window.location.hash;
+    if (!hash) return;
+    const params = new URLSearchParams(hash.replace(/^#/, ""));
+    const type = params.get("type");
+    const accessToken = params.get("access_token");
+    if (type === "signup" && accessToken) {
+      setVerifyNotice("Email verified. You're signed in.");
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, []);
+
+  useEffect(() => {
     if (mode === "signin") {
       setAccountType(null);
       setShowRoleModal(false);
+      setFullName("");
     }
   }, [mode]);
 
-  const signUpWithRole = async (selectedRole: AccountType) => {
+  const signUpWithRole = async (selectedRole: AccountType, name: string) => {
+    const trimmedName = name.trim();
     const { error: signUpErr } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { account_type: selectedRole } },
+      options: { data: { account_type: selectedRole, full_name: trimmedName } },
     });
     if (signUpErr) throw signUpErr;
     setStatus("Check your email to confirm and sign in.");
@@ -52,19 +69,33 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setError("");
     setStatus("");
+    setVerifyNotice("");
     setLoading(true);
     try {
       if (mode === "signin") {
-        const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
         if (signInErr) throw signInErr;
+        const emailConfirmedAt =
+          data.user?.email_confirmed_at ?? (data.user as { confirmed_at?: string } | null)?.confirmed_at;
+        if (!emailConfirmedAt) {
+          await supabase.auth.signOut();
+          setError("Please confirm your email before signing in.");
+          setLoading(false);
+          return;
+        }
         setStatus("Signed in");
       } else {
+        if (!fullName.trim()) {
+          setError("Please enter your full name.");
+          setLoading(false);
+          return;
+        }
         if (!accountType) {
           setShowRoleModal(true);
           setLoading(false);
           return;
         }
-        await signUpWithRole(accountType);
+        await signUpWithRole(accountType, fullName);
       }
     } catch (err: any) {
       setError(err?.message || "Authentication failed");
@@ -80,7 +111,7 @@ const LoginPage: React.FC = () => {
     setStatus("");
     setLoading(true);
     try {
-      await signUpWithRole(selectedRole);
+      await signUpWithRole(selectedRole, fullName);
     } catch (err: any) {
       setError(err?.message || "Authentication failed");
     } finally {
@@ -105,6 +136,18 @@ const LoginPage: React.FC = () => {
           Use your email and password. We’ll keep your CVs tied to your account.
         </p>
         <form className={styles.form} onSubmit={handleAuth}>
+          {mode === "signup" && (
+            <label className={styles.label}>
+              Full name
+              <input
+                className={styles.input}
+                type="text"
+                required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+              />
+            </label>
+          )}
           <label className={styles.label}>
             Email
             <input
@@ -192,6 +235,7 @@ const LoginPage: React.FC = () => {
           </div>
         )}
 
+        {verifyNotice && <div className={styles.notice}>{verifyNotice}</div>}
         {status && <div className={styles.status}>{status}</div>}
         {error && <div className={styles.error}>{error}</div>}
       </div>
