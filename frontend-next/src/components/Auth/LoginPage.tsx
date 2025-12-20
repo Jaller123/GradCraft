@@ -5,6 +5,7 @@ import { supabase } from "../../lib/supabaseClient";
 import styles from "../styles/LoginPage.module.css";
 
 type Mode = "signin" | "signup";
+type AccountType = "student" | "recruiter" | "other";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -14,6 +15,8 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [accountType, setAccountType] = useState<AccountType | null>(null);
+  const [showRoleModal, setShowRoleModal] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -28,6 +31,23 @@ const LoginPage: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (mode === "signin") {
+      setAccountType(null);
+      setShowRoleModal(false);
+    }
+  }, [mode]);
+
+  const signUpWithRole = async (selectedRole: AccountType) => {
+    const { error: signUpErr } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { account_type: selectedRole } },
+    });
+    if (signUpErr) throw signUpErr;
+    setStatus("Check your email to confirm and sign in.");
+  };
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -39,10 +59,28 @@ const LoginPage: React.FC = () => {
         if (signInErr) throw signInErr;
         setStatus("Signed in");
       } else {
-        const { error: signUpErr } = await supabase.auth.signUp({ email, password });
-        if (signUpErr) throw signUpErr;
-        setStatus("Check your email to confirm and sign in.");
+        if (!accountType) {
+          setShowRoleModal(true);
+          setLoading(false);
+          return;
+        }
+        await signUpWithRole(accountType);
       }
+    } catch (err: any) {
+      setError(err?.message || "Authentication failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRoleSelect = async (selectedRole: AccountType) => {
+    setAccountType(selectedRole);
+    setShowRoleModal(false);
+    setError("");
+    setStatus("");
+    setLoading(true);
+    try {
+      await signUpWithRole(selectedRole);
     } catch (err: any) {
       setError(err?.message || "Authentication failed");
     } finally {
@@ -91,6 +129,48 @@ const LoginPage: React.FC = () => {
             {loading ? "Working..." : mode === "signin" ? "Sign in" : "Create account"}
           </button>
         </form>
+
+        {showRoleModal && (
+          <div className={styles.modalBackdrop} role="dialog" aria-modal="true" aria-labelledby="role-title">
+            <div className={styles.modal}>
+              <h2 className={styles.modalTitle} id="role-title">
+                Choose your account type
+              </h2>
+              <p className={styles.modalBody}>
+                This helps us show the right tools and matches for your goals.
+              </p>
+              <div className={styles.roleGrid}>
+                <button
+                  className={styles.roleBtn}
+                  type="button"
+                  onClick={() => handleRoleSelect("student")}
+                  disabled={loading}
+                >
+                  Student
+                </button>
+                <button
+                  className={styles.roleBtn}
+                  type="button"
+                  onClick={() => handleRoleSelect("recruiter")}
+                  disabled={loading}
+                >
+                  Recruiter
+                </button>
+                <button
+                  className={styles.roleBtn}
+                  type="button"
+                  onClick={() => handleRoleSelect("other")}
+                  disabled={loading}
+                >
+                  Other
+                </button>
+              </div>
+              <button className={styles.linkBtn} type="button" onClick={() => setShowRoleModal(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className={styles.switchRow}>
           <span>{mode === "signin" ? "Need an account?" : "Already have an account?"}</span>

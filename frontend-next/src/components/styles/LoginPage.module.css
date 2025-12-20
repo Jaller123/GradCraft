@@ -108,3 +108,63 @@
   color: #ff9f9f;
   border: 1px solid rgba(255, 92, 92, 0.3);
 }
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 9, 20, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 50;
+}
+
+.modal {
+  width: min(420px, 100%);
+  background: #11152c;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+}
+
+.modalTitle {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.modalBody {
+  margin: 0 0 16px;
+  color: #b7bed0;
+  line-height: 1.5;
+}
+
+.roleGrid {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.roleBtn {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(106, 169, 255, 0.15);
+  color: #e9ecf2;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.roleBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(104, 226, 194, 0.6);
+  background: rgba(104, 226, 194, 0.2);
+}
+
+.roleBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
