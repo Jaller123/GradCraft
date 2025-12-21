@@ -1,0 +1,369 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+.page {
+  min-height: 100vh;
+  position: relative;
+  padding: 56px 20px 80px;
+  font-family: "Space Grotesk", sans-serif;
+  color: #edf1f7;
+  background: radial-gradient(circle at 10% 10%, rgba(60, 120, 220, 0.25), transparent 35%),
+    radial-gradient(circle at 80% 0%, rgba(255, 128, 90, 0.18), transparent 32%),
+    radial-gradient(circle at 70% 70%, rgba(30, 180, 170, 0.2), transparent 40%),
+    #0b0d15;
+  overflow: hidden;
+}
+
+.page::before,
+.page::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.page::before {
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+  mix-blend-mode: screen;
+}
+
+.page::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+  opacity: 0.5;
+}
+
+.shell {
+  position: relative;
+  z-index: 1;
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.heroInner {
+  padding: 28px;
+  border-radius: 22px;
+  background: rgba(14, 18, 34, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.4);
+}
+
+.kicker {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 12px;
+  color: #8fb3ff;
+  margin: 0 0 12px;
+}
+
+.heroTitle {
+  margin: 0 0 12px;
+  font-size: clamp(32px, 3.2vw, 44px);
+  line-height: 1.05;
+}
+
+.heroCopy {
+  margin: 0 0 20px;
+  color: #c7d1e4;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.ctaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ctaPrimary,
+.ctaGhost {
+  padding: 12px 18px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+  will-change: transform;
+}
+
+.ctaPrimary {
+  background: linear-gradient(120deg, #75a9ff, #5fe0c8);
+  color: #0b0d15;
+  box-shadow: 0 12px 30px rgba(117, 169, 255, 0.25);
+}
+
+.ctaPrimary:hover {
+  transform: translateY(-2px);
+}
+
+.ctaGhost {
+  background: rgba(255, 255, 255, 0.06);
+  color: #edf1f7;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.ctaGhost:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.heroPanel {
+  padding: 24px;
+  border-radius: 22px;
+  background: rgba(15, 20, 40, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: grid;
+  gap: 16px;
+}
+
+.stat {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.statLabel {
+  margin: 0 0 6px;
+  color: #9fb5d6;
+  font-size: 13px;
+}
+
+.statValue {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.flow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.flowCard {
+  padding: 18px;
+  border-radius: 16px;
+  background: rgba(14, 18, 34, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.flowTitle {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+.flowCopy {
+  margin: 0;
+  color: #b7c3d8;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.market {
+  padding: 24px;
+  border-radius: 22px;
+  background: rgba(10, 14, 28, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.marketHeader {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.marketTitle {
+  margin: 0;
+  font-size: 22px;
+}
+
+.chipRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 12px;
+  color: #d3dcee;
+}
+
+.marketGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 240px) minmax(0, 1fr);
+  gap: 18px;
+}
+
+.sidebar {
+  display: grid;
+  gap: 12px;
+}
+
+.filterCard {
+  padding: 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.filterLabel {
+  font-size: 12px;
+  color: #9fb5d6;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 8px;
+}
+
+.filterValue {
+  margin: 0;
+  font-size: 14px;
+  color: #e3e9f5;
+}
+
+.list {
+  display: grid;
+  gap: 14px;
+}
+
+.jobCard {
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: grid;
+  gap: 10px;
+}
+
+.jobTitle {
+  margin: 0;
+  font-size: 18px;
+}
+
+.jobMeta {
+  margin: 0;
+  color: #aab7cf;
+  font-size: 13px;
+}
+
+.jobTags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.jobTag {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(117, 169, 255, 0.14);
+  color: #cfe0ff;
+  font-size: 12px;
+}
+
+.jobActions {
+  display: flex;
+  gap: 10px;
+}
+
+.jobButton {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: #e6edf8;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+  will-change: transform;
+}
+
+.jobButton:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ctaPrimary,
+  .ctaGhost,
+  .jobButton {
+    transition: none;
+  }
+}
+
+.split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.splitCard {
+  padding: 20px;
+  border-radius: 18px;
+  background: rgba(14, 18, 34, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: grid;
+  gap: 12px;
+}
+
+.splitTitle {
+  margin: 0;
+  font-size: 18px;
+}
+
+.splitCopy {
+  margin: 0;
+  color: #b7c3d8;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.bulletList {
+  margin: 0;
+  padding-left: 16px;
+  color: #cfd7e6;
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.footerNote {
+  font-size: 13px;
+  color: #98a7c4;
+}
+
+@media (max-width: 980px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .flow {
+    grid-template-columns: 1fr;
+  }
+
+  .marketGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .split {
+    grid-template-columns: 1fr;
+  }
+}
