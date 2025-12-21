@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import styles from "../styles/LoginPage.module.css";
 
@@ -14,19 +14,30 @@ const LoginPage: React.FC = () => {
   const [mode, setMode] = useState<Mode>("signin");
   const [status, setStatus] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const [verifyNotice, setVerifyNotice] = useState<string>("");
+  const [toast, setToast] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [accountType, setAccountType] = useState<AccountType | null>(null);
   const [showRoleModal, setShowRoleModal] = useState(false);
+  const confirmRedirectRef = useRef(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setUserEmail(data.session?.user.email ?? null);
+      if (data.session && confirmRedirectRef.current) {
+        setToast("Email verified. You're signed in.");
+        window.history.replaceState(null, "", window.location.pathname);
+        confirmRedirectRef.current = false;
+      }
     });
     const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
       setUserEmail(session?.user.email ?? null);
       setStatus(event === "SIGNED_OUT" ? "Signed out" : "");
+      if (event === "SIGNED_IN" && confirmRedirectRef.current) {
+        setToast("Email verified. You're signed in.");
+        window.history.replaceState(null, "", window.location.pathname);
+        confirmRedirectRef.current = false;
+      }
     });
     return () => {
       listener.subscription.unsubscribe();
@@ -35,15 +46,13 @@ const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const hash = window.location.hash;
-    if (!hash) return;
-    const params = new URLSearchParams(hash.replace(/^#/, ""));
-    const type = params.get("type");
-    const accessToken = params.get("access_token");
-    if (type === "signup" && accessToken) {
-      setVerifyNotice("Email verified. You're signed in.");
-      window.history.replaceState(null, "", window.location.pathname);
-    }
+    const params = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const type = params.get("type") ?? hashParams.get("type");
+    const tokenHash = params.get("token_hash") ?? hashParams.get("token_hash");
+    const accessToken = params.get("access_token") ?? hashParams.get("access_token");
+    const code = params.get("code") ?? hashParams.get("code");
+    confirmRedirectRef.current = type === "signup" || !!tokenHash || !!accessToken || !!code;
   }, []);
 
   useEffect(() => {
@@ -69,7 +78,7 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setError("");
     setStatus("");
-    setVerifyNotice("");
+    setToast("");
     setLoading(true);
     try {
       if (mode === "signin") {
@@ -128,8 +137,15 @@ const LoginPage: React.FC = () => {
     setLoading(false);
   };
 
+  useEffect(() => {
+    if (!toast) return;
+    const timer = window.setTimeout(() => setToast(""), 4500);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
+
   return (
     <main className={styles.wrap}>
+      {toast && <div className={styles.toast}>{toast}</div>}
       <div className={styles.card}>
         <h1 className={styles.title}>Sign {mode === "signin" ? "in" : "up"} to GradCraft</h1>
         <p className={styles.subtitle}>
@@ -235,7 +251,6 @@ const LoginPage: React.FC = () => {
           </div>
         )}
 
-        {verifyNotice && <div className={styles.notice}>{verifyNotice}</div>}
         {status && <div className={styles.status}>{status}</div>}
         {error && <div className={styles.error}>{error}</div>}
       </div>
