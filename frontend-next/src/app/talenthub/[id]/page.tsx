@@ -7,6 +7,7 @@ import styles from "./AdDetail.module.css";
 
 type AdRecord = {
   id: string;
+  owner_id: string;
   title: string;
   company: string;
   location: string | null;
@@ -15,6 +16,7 @@ type AdRecord = {
   employment_type: string | null;
   apply_url: string | null;
   tags: string[] | null;
+  expires_at: string | null;
   created_at: string;
 };
 
@@ -26,19 +28,27 @@ export default function AdDetailPage({ params }: Props) {
   const [ad, setAd] = useState<AdRecord | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [expiresSoon, setExpiresSoon] = useState(false);
 
   useEffect(() => {
     const fetchAd = async () => {
       try {
         const { data, error: fetchErr } = await supabase
-          .from("ads")
-          .select("id,title,company,location,description,requirements,employment_type,apply_url,tags,created_at")
+          .from("job_posts")
+          .select("id,title,company,location,description,requirements,employment_type,apply_url,tags,expires_at,created_at,owner_id")
           .eq("id", params.id)
           .single();
         if (fetchErr) {
           setError(fetchErr.message);
         } else {
           setAd(data);
+          if (data?.expires_at) {
+            const expiresAt = new Date(data.expires_at).getTime();
+            const daysLeft = Math.ceil((expiresAt - Date.now()) / 86400000);
+            setExpiresSoon(daysLeft <= 5 && daysLeft >= 0);
+          }
         }
       } finally {
         setLoading(false);
@@ -46,6 +56,29 @@ export default function AdDetailPage({ params }: Props) {
     };
     fetchAd();
   }, [params.id]);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUserId(data.user?.id ?? null);
+    });
+  }, []);
+
+  const handleDelete = async () => {
+    if (!ad) return;
+    const ok = window.confirm("Delete this role posting? This cannot be undone.");
+    if (!ok) return;
+    setDeleting(true);
+    setError("");
+    try {
+      const { error: deleteErr } = await supabase.from("job_posts").delete().eq("id", ad.id);
+      if (deleteErr) throw deleteErr;
+      window.location.href = "/talenthub";
+    } catch (err: any) {
+      setError(err?.message || "Failed to delete role.");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   return (
     <main className={styles.page}>
@@ -63,6 +96,11 @@ export default function AdDetailPage({ params }: Props) {
                 {ad.location ? ` - ${ad.location}` : ""}
                 {ad.employment_type ? ` - ${ad.employment_type}` : ""}
               </p>
+              {ad.expires_at && (
+                <p className={expiresSoon ? styles.expirySoon : styles.expiry}>
+                  Expires {new Date(ad.expires_at).toLocaleDateString()}
+                </p>
+              )}
               {ad.tags && ad.tags.length > 0 && (
                 <div className={styles.tagRow}>
                   {ad.tags.map((tag) => (
@@ -108,6 +146,11 @@ export default function AdDetailPage({ params }: Props) {
           <Link className={styles.ghost} href="/talenthub/post">
             Post another role
           </Link>
+          {ad && userId && ad.owner_id === userId && (
+            <button className={styles.danger} type="button" onClick={handleDelete} disabled={deleting}>
+              {deleting ? "Deleting..." : "Delete role"}
+            </button>
+          )}
         </div>
       </div>
     </main>

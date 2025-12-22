@@ -36,6 +36,20 @@
   color: #b8c5dc;
 }
 
+.expiry,
+.expirySoon {
+  margin: 8px 0 0;
+  font-size: 13px;
+}
+
+.expiry {
+  color: #9fb0cc;
+}
+
+.expirySoon {
+  color: #ff9f9f;
+}
+
 .tagRow {
   margin-top: 12px;
   display: flex;
@@ -88,6 +102,21 @@
 .ghost:hover {
   transform: translateY(-2px);
   background: rgba(255, 255, 255, 0.1);
+}
+
+.danger {
+  padding: 12px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 92, 92, 0.5);
+  background: rgba(255, 92, 92, 0.15);
+  color: #ffd2d2;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.danger:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 92, 92, 0.25);
 }
 
 .error {

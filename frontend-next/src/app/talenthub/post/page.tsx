@@ -15,6 +15,7 @@ type FormState = {
   requirements: string;
   applyUrl: string;
   tags: string;
+  expiresAt: string;
 };
 
 const EMPTY_FORM: FormState = {
@@ -26,6 +27,7 @@ const EMPTY_FORM: FormState = {
   requirements: "",
   applyUrl: "",
   tags: "",
+  expiresAt: "",
 };
 
 export default function PostRolePage() {
@@ -85,8 +87,9 @@ export default function PostRolePage() {
         apply_url: form.applyUrl.trim() || null,
         tags: tags.length ? tags : null,
         status: "published",
+        expires_at: form.expiresAt ? new Date(form.expiresAt).toISOString() : null,
       };
-      const { data, error: insertErr } = await supabase.from("ads").insert(payload).select("id").single();
+      const { data, error: insertErr } = await supabase.from("job_posts").insert(payload).select("id").single();
       if (insertErr) throw insertErr;
       setNotice("Role posted. Redirecting to the live listing...");
       router.push(`/talenthub/${data.id}`);
@@ -171,6 +174,15 @@ export default function PostRolePage() {
                 />
               </label>
               <label className={styles.label}>
+                Expires on
+                <input
+                  className={styles.input}
+                  type="date"
+                  value={form.expiresAt}
+                  onChange={updateField("expiresAt")}
+                />
+              </label>
+              <label className={styles.label}>
                 Apply URL
                 <input
                   className={styles.input}
@@ -198,7 +210,7 @@ export default function PostRolePage() {
                   Back to Talent Hub
                 </Link>
               </div>
-              <p className={styles.hint}>Fields map directly to the `ads` table.</p>
+              <p className={styles.hint}>Fields map directly to the `job_posts` table.</p>
               {notice && <div className={styles.notice}>{notice}</div>}
               {error && <div className={styles.error}>{error}</div>}
             </form>

@@ -12,6 +12,7 @@ type AdPreview = {
   location: string | null;
   employment_type: string | null;
   tags: string[] | null;
+  expires_at: string | null;
 };
 
 export default function RecruitersPage() {
@@ -20,15 +21,17 @@ export default function RecruitersPage() {
 
   useEffect(() => {
     supabase
-      .from("ads")
-      .select("id,title,company,location,employment_type,tags")
+      .from("job_posts")
+      .select("id,title,company,location,employment_type,tags,expires_at")
       .order("created_at", { ascending: false })
       .limit(3)
       .then(({ data, error }) => {
         if (error) {
           setAdsError(error.message);
         } else {
-          setAds(data ?? []);
+          const now = Date.now();
+          const filtered = (data ?? []).filter((ad) => !ad.expires_at || Date.parse(ad.expires_at) > now);
+          setAds(filtered);
         }
       });
   }, []);
@@ -79,7 +82,11 @@ export default function RecruitersPage() {
           <div className={styles.list}>
             {adsError && <p className={styles.footerNote}>Unable to load roles yet.</p>}
             {!adsError && ads.length === 0 && <p className={styles.footerNote}>No roles posted yet.</p>}
-            {ads.map((ad) => (
+            {ads.map((ad) => {
+              const expiresAt = ad.expires_at ? new Date(ad.expires_at) : null;
+              const daysLeft = expiresAt ? Math.ceil((expiresAt.getTime() - Date.now()) / 86400000) : null;
+              const isExpiringSoon = daysLeft !== null && daysLeft <= 5;
+              return (
               <article key={ad.id} className={styles.jobCard}>
                 <h3 className={styles.jobTitle}>{ad.title}</h3>
                 <p className={styles.jobMeta}>
@@ -87,6 +94,11 @@ export default function RecruitersPage() {
                   {ad.location ? ` - ${ad.location}` : ""}
                   {ad.employment_type ? ` - ${ad.employment_type}` : ""}
                 </p>
+                {expiresAt && (
+                  <p className={isExpiringSoon ? styles.expirySoon : styles.expiry}>
+                    {isExpiringSoon ? `Expires in ${daysLeft} days` : `Expires ${expiresAt.toLocaleDateString()}`}
+                  </p>
+                )}
                 {ad.tags && ad.tags.length > 0 && (
                   <div className={styles.jobTags}>
                     {ad.tags.map((tag) => (
@@ -102,7 +114,8 @@ export default function RecruitersPage() {
                   </Link>
                 </div>
               </article>
-            ))}
+            );
+            })}
           </div>
         </section>
 

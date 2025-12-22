@@ -41,13 +41,12 @@ const Navbar: React.FC = () => {
         </span>
 
         <ul className={styles.links}>
-          <li><a href="#chat" className={styles.link}>Chat</a></li>
           <li><Link href="/cv" 
           className={styles.link}
           onClick={() => { clearCurrent(); }}
-          >CV Builder</Link></li>
+          >Resume Builder</Link></li>
           <li><Link href="/saved" className={styles.link}>Saved CVs</Link></li>
-          <li><a href="#recruiters" className={styles.link}>Recruiters</a></li>
+          <li><a href="/talenthub" className={styles.link}>Talent Hub</a></li>
         </ul>
 
         <div className={styles.userArea}>
