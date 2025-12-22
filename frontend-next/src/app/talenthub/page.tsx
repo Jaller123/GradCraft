@@ -1,9 +1,38 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { supabase } from "../../lib/supabaseClient";
 import styles from "./RecruitersPage.module.css";
 
+type AdPreview = {
+  id: string;
+  title: string;
+  company: string;
+  location: string | null;
+  employment_type: string | null;
+  tags: string[] | null;
+};
+
 export default function RecruitersPage() {
+  const [ads, setAds] = useState<AdPreview[]>([]);
+  const [adsError, setAdsError] = useState("");
+
+  useEffect(() => {
+    supabase
+      .from("ads")
+      .select("id,title,company,location,employment_type,tags")
+      .order("created_at", { ascending: false })
+      .limit(3)
+      .then(({ data, error }) => {
+        if (error) {
+          setAdsError(error.message);
+        } else {
+          setAds(data ?? []);
+        }
+      });
+  }, []);
+
   return (
     <main className={styles.page}>
       <div className={styles.shell}>
@@ -15,9 +44,9 @@ export default function RecruitersPage() {
               Post new grad roles, spot high potential students, and move from first contact to interview in days.
             </p>
             <div className={styles.ctaRow}>
-              <button className={styles.ctaPrimary} type="button">
+              <Link className={styles.ctaPrimary} href="/talenthub/post">
                 Post a role
-              </button>
+              </Link>
               <button className={styles.ctaGhost} type="button">
                 Find candidates
               </button>
@@ -36,6 +65,44 @@ export default function RecruitersPage() {
               <p className={styles.statLabel}>Shortlist rate</p>
               <p className={styles.statValue}>32% move to interview</p>
             </div>
+          </div>
+        </section>
+
+        <section className={styles.market}>
+          <div className={styles.marketHeader}>
+            <h2 className={styles.marketTitle}>Latest postings</h2>
+            <div className={styles.chipRow}>
+              <span className={styles.chip}>New grad friendly</span>
+              <span className={styles.chip}>Fresh listings</span>
+            </div>
+          </div>
+          <div className={styles.list}>
+            {adsError && <p className={styles.footerNote}>Unable to load roles yet.</p>}
+            {!adsError && ads.length === 0 && <p className={styles.footerNote}>No roles posted yet.</p>}
+            {ads.map((ad) => (
+              <article key={ad.id} className={styles.jobCard}>
+                <h3 className={styles.jobTitle}>{ad.title}</h3>
+                <p className={styles.jobMeta}>
+                  {ad.company}
+                  {ad.location ? ` - ${ad.location}` : ""}
+                  {ad.employment_type ? ` - ${ad.employment_type}` : ""}
+                </p>
+                {ad.tags && ad.tags.length > 0 && (
+                  <div className={styles.jobTags}>
+                    {ad.tags.map((tag) => (
+                      <span key={tag} className={styles.jobTag}>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <div className={styles.jobActions}>
+                  <Link className={styles.jobButton} href={`/talenthub/${ad.id}`}>
+                    View listing
+                  </Link>
+                </div>
+              </article>
+            ))}
           </div>
         </section>
 
@@ -88,7 +155,7 @@ export default function RecruitersPage() {
             <div className={styles.list}>
               <article className={styles.jobCard}>
                 <h3 className={styles.jobTitle}>Junior Product Analyst</h3>
-                <p className={styles.jobMeta}>Nordic Insights • Stockholm • Full time</p>
+                <p className={styles.jobMeta}>Nordic Insights - Stockholm - Full time</p>
                 <div className={styles.jobTags}>
                   <span className={styles.jobTag}>SQL</span>
                   <span className={styles.jobTag}>Dashboards</span>
@@ -105,7 +172,7 @@ export default function RecruitersPage() {
               </article>
               <article className={styles.jobCard}>
                 <h3 className={styles.jobTitle}>Graduate Software Engineer</h3>
-                <p className={styles.jobMeta}>SignalCraft • Remote • New grad</p>
+                <p className={styles.jobMeta}>SignalCraft - Remote - New grad</p>
                 <div className={styles.jobTags}>
                   <span className={styles.jobTag}>TypeScript</span>
                   <span className={styles.jobTag}>APIs</span>
@@ -122,7 +189,7 @@ export default function RecruitersPage() {
               </article>
               <article className={styles.jobCard}>
                 <h3 className={styles.jobTitle}>Marketing Associate</h3>
-                <p className={styles.jobMeta}>Kite Labs • Gothenburg • Hybrid</p>
+                <p className={styles.jobMeta}>Kite Labs - Gothenburg - Hybrid</p>
                 <div className={styles.jobTags}>
                   <span className={styles.jobTag}>Growth</span>
                   <span className={styles.jobTag}>Content</span>
@@ -166,9 +233,9 @@ export default function RecruitersPage() {
               <li>Auto matched student list</li>
               <li>Employer branding block</li>
             </ul>
-            <button className={styles.ctaPrimary} type="button">
+            <Link className={styles.ctaPrimary} href="/talenthub/post">
               Create a job ad
-            </button>
+            </Link>
           </div>
         </section>
 

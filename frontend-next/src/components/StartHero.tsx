@@ -50,7 +50,7 @@ const StartHero: React.FC<Props> = ({ onCreateCvClick, onRecruitersClick }) => {
             </Link>
             
            <Link href="/talenthub" className={`${styles.cta} ${styles.secondary}`}>
-                For Recruiters
+                Talent Hub
              </Link>
         </div>
       </div>
