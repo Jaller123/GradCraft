@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { supabase } from "../lib/supabaseClient";
 import { listCvs, setCurrent, renameCv, deleteCv, CvRecord } from "./CvStore";
 import styles from "../components/styles/SaveCVsPage.module.css";
 
@@ -16,6 +17,11 @@ const SavedCvsPage: React.FC = () => {
     (async () => {
       try {
         setLoading(true);
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (!sessionData.session?.user) {
+          router.replace("/login?reason=login_required");
+          return;
+        }
         const data = await listCvs();
         setItems(data);
       } catch (e: any) {

@@ -143,9 +143,11 @@ export default function AdDetailPage({ params }: Props) {
           <Link className={styles.ghost} href="/talenthub">
             Back to Talent Hub
           </Link>
-          <Link className={styles.ghost} href="/talenthub/post">
-            Post another role
-          </Link>
+          {ad && userId && ad.owner_id === userId && (
+            <Link className={styles.ghost} href="/talenthub/post">
+              Post another role
+            </Link>
+          )}
           {ad && userId && ad.owner_id === userId && (
             <button className={styles.danger} type="button" onClick={handleDelete} disabled={deleting}>
               {deleting ? "Deleting..." : "Delete role"}

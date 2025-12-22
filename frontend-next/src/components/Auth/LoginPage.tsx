@@ -47,6 +47,10 @@ const LoginPage: React.FC = () => {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
+    const reason = params.get("reason");
+    if (reason === "login_required") {
+      setToast("You have to be logged in.");
+    }
     const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
     const type = params.get("type") ?? hashParams.get("type");
     const tokenHash = params.get("token_hash") ?? hashParams.get("token_hash");

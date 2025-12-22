@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Chatbot from "../../components/CV Form/ChatBot";
 import CvForm from "../../components/CV Form/CvForm";
 import styles from "../../App.module.css";
+import { supabase } from "../../lib/supabaseClient";
 import {
   getCurrent,
   createCv,
@@ -71,6 +72,11 @@ export default function CvPage() {
     (async () => {
       try {
         setLoading(true);
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (!sessionData.session?.user) {
+          router.replace("/login?reason=login_required");
+          return;
+        }
         const targetId = resumeId || getCurrentId();
         if (targetId) {
           const data = await loadCv(targetId);
