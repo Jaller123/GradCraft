@@ -79,9 +79,9 @@ export default function RecruitersPage() {
               <button className={styles.ctaPrimary} type="button" onClick={handlePostRole}>
                 Post a role
               </button>
-              <button className={styles.ctaGhost} type="button">
+              <Link className={styles.ctaGhost} href="/talenthub/candidates">
                 Find candidates
-              </button>
+              </Link>
             </div>
           </div>
         </section>

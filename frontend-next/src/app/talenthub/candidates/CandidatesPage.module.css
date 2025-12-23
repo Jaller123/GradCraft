@@ -1,0 +1,127 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+.page {
+  min-height: 100vh;
+  padding: 56px 20px 80px;
+  font-family: "Space Grotesk", sans-serif;
+  color: #edf1f7;
+  background: radial-gradient(circle at 12% 10%, rgba(70, 130, 230, 0.22), transparent 36%),
+    radial-gradient(circle at 80% 5%, rgba(255, 140, 90, 0.16), transparent 34%),
+    radial-gradient(circle at 70% 75%, rgba(40, 200, 170, 0.2), transparent 40%),
+    #0b0d15;
+}
+
+.shell {
+  width: min(1100px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 24px;
+}
+
+.header {
+  display: grid;
+  gap: 10px;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(30px, 3vw, 40px);
+}
+
+.subtitle {
+  margin: 0;
+  color: #b8c5dc;
+  line-height: 1.6;
+}
+
+.filters {
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(14, 18, 34, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: grid;
+  gap: 12px;
+}
+
+.filterRow {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.label {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: #9fb5d6;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.input,
+.select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(12, 16, 32, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #edf1f7;
+  font-size: 13px;
+}
+
+.toggleRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+  color: #c9d5ea;
+}
+
+.list {
+  display: grid;
+  gap: 14px;
+}
+
+.card {
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(14, 18, 34, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: grid;
+  gap: 10px;
+}
+
+.name {
+  margin: 0;
+  font-size: 18px;
+}
+
+.meta {
+  margin: 0;
+  color: #b8c5dc;
+  font-size: 13px;
+}
+
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(117, 169, 255, 0.14);
+  color: #cfe0ff;
+  font-size: 12px;
+}
+
+.empty {
+  color: #98a7c4;
+  font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .filterRow {
+    grid-template-columns: 1fr;
+  }
+}

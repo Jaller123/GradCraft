@@ -60,31 +60,95 @@
   gap: 10px;
 }
 
-.userLabel {
-  color: #cdd7ef;
-  font-size: 0.9rem;
+.menu {
+  position: relative;
 }
 
-.userChip {
-  padding: 6px 10px;
+.menuTrigger {
+  padding: 6px 12px;
   border-radius: 999px;
+  border: 1px solid rgba(10, 224, 224, 0.35);
   background: rgba(10, 224, 224, 0.14);
   color: #dff7ff;
   font-size: 0.9rem;
-  border: 1px solid rgba(10, 224, 224, 0.35);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.logout {
+.menuPanel {
+  position: absolute;
+  right: 0;
+  top: 44px;
+  min-width: 220px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(15, 20, 40, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  z-index: 120;
+}
+
+.chevronDown,
+.chevronUp {
+  display: inline-block;
+  font-size: 0.7rem;
+  transition: transform 0.15s ease;
+}
+
+.chevronUp {
+  transform: rotate(180deg);
+}
+
+.profileSummary {
+  display: grid;
+  gap: 4px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.profileName {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.profileMeta {
+  color: #b7c3d8;
+  font-size: 0.8rem;
+}
+
+.menuLinks {
+  display: grid;
+  gap: 6px;
+  padding-top: 10px;
+}
+
+.menuLink {
+  color: #dfe8f5;
+  text-decoration: none;
+  font-size: 0.85rem;
+  padding: 6px 8px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.menuLink:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.menuLogout {
   border: 1px solid rgba(255, 87, 87, 0.6);
   background: rgba(255, 87, 87, 0.16);
   color: #ffb0b0;
-  padding: 6px 12px;
+  padding: 6px 10px;
   border-radius: 8px;
   cursor: pointer;
+  font-size: 0.85rem;
   transition: all 0.2s ease;
 }
 
-.logout:hover {
+.menuLogout:hover {
   background: rgba(255, 87, 87, 0.28);
   color: #ffe6e6;
 }

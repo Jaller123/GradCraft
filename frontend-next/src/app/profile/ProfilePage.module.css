@@ -1,0 +1,65 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+.page {
+  min-height: 100vh;
+  padding: 56px 20px 80px;
+  font-family: "Space Grotesk", sans-serif;
+  color: #edf1f7;
+  background: radial-gradient(circle at 12% 10%, rgba(70, 130, 230, 0.2), transparent 36%),
+    radial-gradient(circle at 80% 5%, rgba(255, 140, 90, 0.14), transparent 34%),
+    radial-gradient(circle at 70% 75%, rgba(40, 200, 170, 0.18), transparent 40%),
+    #0b0d15;
+}
+
+.shell {
+  width: min(820px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 20px;
+}
+
+.card {
+  padding: 22px;
+  border-radius: 18px;
+  background: rgba(14, 18, 34, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.title {
+  margin: 0 0 8px;
+  font-size: clamp(28px, 3vw, 36px);
+}
+
+.subtitle {
+  margin: 0;
+  color: #b8c5dc;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  color: #b7c3d8;
+}
+
+.value {
+  color: #edf1f7;
+  font-size: 15px;
+}
+
+.notice {
+  color: #9fb0cc;
+  font-size: 14px;
+}
+
+@media (max-width: 720px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

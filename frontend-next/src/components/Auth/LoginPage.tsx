@@ -6,6 +6,7 @@ import styles from "../styles/LoginPage.module.css";
 
 type Mode = "signin" | "signup";
 type AccountType = "student" | "recruiter" | "other";
+type RoleStep = "select" | "details";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -19,6 +20,9 @@ const LoginPage: React.FC = () => {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [accountType, setAccountType] = useState<AccountType | null>(null);
   const [showRoleModal, setShowRoleModal] = useState(false);
+  const [roleStep, setRoleStep] = useState<RoleStep>("select");
+  const [studiedRole, setStudiedRole] = useState("");
+  const [industryCategory, setIndustryCategory] = useState("software");
   const confirmRedirectRef = useRef(false);
 
   useEffect(() => {
@@ -64,15 +68,25 @@ const LoginPage: React.FC = () => {
       setAccountType(null);
       setShowRoleModal(false);
       setFullName("");
+      setStudiedRole("");
+      setIndustryCategory("software");
+      setRoleStep("select");
     }
   }, [mode]);
 
-  const signUpWithRole = async (selectedRole: AccountType, name: string) => {
+  const signUpWithRole = async (selectedRole: AccountType, name: string, major: string, industry: string) => {
     const trimmedName = name.trim();
     const { error: signUpErr } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { account_type: selectedRole, full_name: trimmedName } },
+      options: {
+        data: {
+          account_type: selectedRole,
+          full_name: trimmedName,
+          studied_role: major.trim(),
+          industry_category: industry,
+        },
+      },
     });
     if (signUpErr) throw signUpErr;
     setStatus("Check your email to confirm and sign in.");
@@ -105,10 +119,17 @@ const LoginPage: React.FC = () => {
         }
         if (!accountType) {
           setShowRoleModal(true);
+          setRoleStep("select");
           setLoading(false);
           return;
         }
-        await signUpWithRole(accountType, fullName);
+        if (accountType === "student" && !studiedRole.trim()) {
+          setShowRoleModal(true);
+          setRoleStep("details");
+          setLoading(false);
+          return;
+        }
+        await signUpWithRole(accountType, fullName, studiedRole, industryCategory);
       }
     } catch (err: any) {
       setError(err?.message || "Authentication failed");
@@ -117,14 +138,23 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const handleRoleSelect = async (selectedRole: AccountType) => {
+  const handleRoleSelect = (selectedRole: AccountType) => {
     setAccountType(selectedRole);
+    setRoleStep("details");
+  };
+
+  const handleRoleConfirm = async () => {
+    if (!accountType) return;
+    if (accountType === "student" && !studiedRole.trim()) {
+      setError("Please add your field of study.");
+      return;
+    }
     setShowRoleModal(false);
     setError("");
     setStatus("");
     setLoading(true);
     try {
-      await signUpWithRole(selectedRole, fullName);
+      await signUpWithRole(accountType, fullName, studiedRole, industryCategory);
     } catch (err: any) {
       setError(err?.message || "Authentication failed");
     } finally {
@@ -196,41 +226,87 @@ const LoginPage: React.FC = () => {
         {showRoleModal && (
           <div className={styles.modalBackdrop} role="dialog" aria-modal="true" aria-labelledby="role-title">
             <div className={styles.modal}>
-              <h2 className={styles.modalTitle} id="role-title">
-                Choose your account type
-              </h2>
-              <p className={styles.modalBody}>
-                This helps us show the right tools and matches for your goals.
-              </p>
-              <div className={styles.roleGrid}>
-                <button
-                  className={styles.roleBtn}
-                  type="button"
-                  onClick={() => handleRoleSelect("student")}
-                  disabled={loading}
-                >
-                  Student
-                </button>
-                <button
-                  className={styles.roleBtn}
-                  type="button"
-                  onClick={() => handleRoleSelect("recruiter")}
-                  disabled={loading}
-                >
-                  Recruiter
-                </button>
-                <button
-                  className={styles.roleBtn}
-                  type="button"
-                  onClick={() => handleRoleSelect("other")}
-                  disabled={loading}
-                >
-                  Other
-                </button>
-              </div>
-              <button className={styles.linkBtn} type="button" onClick={() => setShowRoleModal(false)}>
-                Cancel
-              </button>
+              {roleStep === "select" ? (
+                <>
+                  <h2 className={styles.modalTitle} id="role-title">
+                    Choose your account type
+                  </h2>
+                  <p className={styles.modalBody}>
+                    This helps us show the right tools and matches for your goals.
+                  </p>
+                  <div className={styles.roleGrid}>
+                    <button
+                      className={styles.roleBtn}
+                      type="button"
+                      onClick={() => handleRoleSelect("student")}
+                      disabled={loading}
+                    >
+                      Student
+                    </button>
+                    <button
+                      className={styles.roleBtn}
+                      type="button"
+                      onClick={() => handleRoleSelect("recruiter")}
+                      disabled={loading}
+                    >
+                      Recruiter
+                    </button>
+                    <button
+                      className={styles.roleBtn}
+                      type="button"
+                      onClick={() => handleRoleSelect("other")}
+                      disabled={loading}
+                    >
+                      Other
+                    </button>
+                  </div>
+                  <button className={styles.linkBtn} type="button" onClick={() => setShowRoleModal(false)}>
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <>
+                  <h2 className={styles.modalTitle} id="role-title">
+                    Add your study focus
+                  </h2>
+                  <p className={styles.modalBody}>
+                    This helps recruiters search for graduates in the right field.
+                  </p>
+                  <label className={styles.label}>
+                    Industry
+                    <select
+                      className={styles.input}
+                      value={industryCategory}
+                      onChange={(e) => setIndustryCategory(e.target.value)}
+                    >
+                      <option value="software">Software</option>
+                      <option value="data">Data</option>
+                      <option value="design">Design</option>
+                      <option value="marketing">Marketing</option>
+                      <option value="operations">Operations</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </label>
+                  <label className={styles.label}>
+                    Field of study
+                    <input
+                      className={styles.input}
+                      type="text"
+                      placeholder="Computer Science, UX Design, Analytics"
+                      value={studiedRole}
+                      onChange={(e) => setStudiedRole(e.target.value)}
+                    />
+                  </label>
+                  <div className={styles.modalActions}>
+                    <button className={styles.linkBtn} type="button" onClick={() => setRoleStep("select")}>
+                      Back
+                    </button>
+                    <button className={styles.roleBtn} type="button" onClick={handleRoleConfirm} disabled={loading}>
+                      Continue
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}
