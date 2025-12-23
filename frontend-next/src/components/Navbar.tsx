@@ -11,6 +11,7 @@ type Profile = {
   full_name: string | null;
   role: string | null;
   studied_role: string | null;
+  occupation_role: string | null;
   industry_category: string | null;
 };
 
@@ -24,10 +25,22 @@ const Navbar: React.FC = () => {
   const menuRef = React.useRef<HTMLDivElement | null>(null);
 
   React.useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
+    const syncSession = async () => {
+      const { data } = await supabase.auth.getSession();
       setUserEmail(data.session?.user.email ?? null);
       setUserId(data.session?.user.id ?? null);
-    });
+      if (data.session?.user) {
+        const { data: userData, error: userErr } = await supabase.auth.getUser();
+        if (userErr || !userData.user) {
+          await supabase.auth.signOut();
+          setUserEmail(null);
+          setUserId(null);
+          setProfile(null);
+          setMenuOpen(false);
+        }
+      }
+    };
+    syncSession();
     const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
       setUserEmail(session?.user.email ?? null);
       setUserId(session?.user.id ?? null);
@@ -44,7 +57,7 @@ const Navbar: React.FC = () => {
     if (!userId) return;
     supabase
       .from("profiles")
-      .select("full_name,role,studied_role,industry_category")
+      .select("full_name,role,studied_role,occupation_role,industry_category")
       .eq("user_id", userId)
       .single()
       .then(({ data }) => {
@@ -112,6 +125,9 @@ const Navbar: React.FC = () => {
                     {profile?.role && <div className={styles.profileMeta}>Role: {profile.role}</div>}
                     {profile?.studied_role && (
                       <div className={styles.profileMeta}>Studied: {profile.studied_role}</div>
+                    )}
+                    {profile?.occupation_role && (
+                      <div className={styles.profileMeta}>Occupation: {profile.occupation_role}</div>
                     )}
                     {profile?.industry_category && (
                       <div className={styles.profileMeta}>Industry: {profile.industry_category}</div>

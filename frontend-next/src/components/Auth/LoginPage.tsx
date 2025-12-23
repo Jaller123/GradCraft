@@ -22,6 +22,7 @@ const LoginPage: React.FC = () => {
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [roleStep, setRoleStep] = useState<RoleStep>("select");
   const [studiedRole, setStudiedRole] = useState("");
+  const [occupationRole, setOccupationRole] = useState("");
   const [industryCategory, setIndustryCategory] = useState("software");
   const confirmRedirectRef = useRef(false);
 
@@ -69,12 +70,19 @@ const LoginPage: React.FC = () => {
       setShowRoleModal(false);
       setFullName("");
       setStudiedRole("");
+      setOccupationRole("");
       setIndustryCategory("software");
       setRoleStep("select");
     }
   }, [mode]);
 
-  const signUpWithRole = async (selectedRole: AccountType, name: string, major: string, industry: string) => {
+  const signUpWithRole = async (
+    selectedRole: AccountType,
+    name: string,
+    major: string,
+    occupation: string,
+    industry: string
+  ) => {
     const trimmedName = name.trim();
     const { error: signUpErr } = await supabase.auth.signUp({
       email,
@@ -84,6 +92,7 @@ const LoginPage: React.FC = () => {
           account_type: selectedRole,
           full_name: trimmedName,
           studied_role: major.trim(),
+          occupation_role: occupation.trim(),
           industry_category: industry,
         },
       },
@@ -129,7 +138,13 @@ const LoginPage: React.FC = () => {
           setLoading(false);
           return;
         }
-        await signUpWithRole(accountType, fullName, studiedRole, industryCategory);
+        if (accountType === "recruiter" && !occupationRole.trim()) {
+          setShowRoleModal(true);
+          setRoleStep("details");
+          setLoading(false);
+          return;
+        }
+        await signUpWithRole(accountType, fullName, studiedRole, occupationRole, industryCategory);
       }
     } catch (err: any) {
       setError(err?.message || "Authentication failed");
@@ -149,12 +164,16 @@ const LoginPage: React.FC = () => {
       setError("Please add your field of study.");
       return;
     }
+    if (accountType === "recruiter" && !occupationRole.trim()) {
+      setError("Please add your occupation.");
+      return;
+    }
     setShowRoleModal(false);
     setError("");
     setStatus("");
     setLoading(true);
     try {
-      await signUpWithRole(accountType, fullName, studiedRole, industryCategory);
+      await signUpWithRole(accountType, fullName, studiedRole, occupationRole, industryCategory);
     } catch (err: any) {
       setError(err?.message || "Authentication failed");
     } finally {
@@ -267,10 +286,10 @@ const LoginPage: React.FC = () => {
               ) : (
                 <>
                   <h2 className={styles.modalTitle} id="role-title">
-                    Add your study focus
+                    Add your focus
                   </h2>
                   <p className={styles.modalBody}>
-                    This helps recruiters search for graduates in the right field.
+                    This helps match students and recruiters in the right field.
                   </p>
                   <label className={styles.label}>
                     Industry
@@ -287,16 +306,29 @@ const LoginPage: React.FC = () => {
                       <option value="other">Other</option>
                     </select>
                   </label>
-                  <label className={styles.label}>
-                    Field of study
-                    <input
-                      className={styles.input}
-                      type="text"
-                      placeholder="Computer Science, UX Design, Analytics"
-                      value={studiedRole}
-                      onChange={(e) => setStudiedRole(e.target.value)}
-                    />
-                  </label>
+                  {accountType === "student" ? (
+                    <label className={styles.label}>
+                      Field of study
+                      <input
+                        className={styles.input}
+                        type="text"
+                        placeholder="Computer Science, UX Design, Analytics"
+                        value={studiedRole}
+                        onChange={(e) => setStudiedRole(e.target.value)}
+                      />
+                    </label>
+                  ) : (
+                    <label className={styles.label}>
+                      Occupation
+                      <input
+                        className={styles.input}
+                        type="text"
+                        placeholder="Recruiter, Talent Partner, Hiring Manager"
+                        value={occupationRole}
+                        onChange={(e) => setOccupationRole(e.target.value)}
+                      />
+                    </label>
+                  )}
                   <div className={styles.modalActions}>
                     <button className={styles.linkBtn} type="button" onClick={() => setRoleStep("select")}>
                       Back

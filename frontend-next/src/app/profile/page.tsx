@@ -13,6 +13,7 @@ type Profile = {
   graduation_title: string | null;
   graduation_year: number | null;
   studied_role: string | null;
+  occupation_role: string | null;
   industry_category: string | null;
 };
 
@@ -33,7 +34,7 @@ export default function ProfilePage() {
         const { data, error: fetchErr } = await supabase
           .from("profiles")
           .select(
-            "full_name,email,role,location,graduation_title,graduation_year,studied_role,industry_category"
+            "full_name,email,role,location,graduation_title,graduation_year,studied_role,occupation_role,industry_category"
           )
           .eq("user_id", sessionData.session.user.id)
           .single();
@@ -88,10 +89,18 @@ export default function ProfilePage() {
                   {profile.graduation_year ? profile.graduation_year : "Not set"}
                 </span>
               </div>
-              <div className={styles.field}>
-                Studied role
-                <span className={styles.value}>{profile.studied_role || "Not set"}</span>
-              </div>
+              {profile.role === "student" && (
+                <div className={styles.field}>
+                  Studied role
+                  <span className={styles.value}>{profile.studied_role || "Not set"}</span>
+                </div>
+              )}
+              {profile.role === "recruiter" && (
+                <div className={styles.field}>
+                  Occupation
+                  <span className={styles.value}>{profile.occupation_role || "Not set"}</span>
+                </div>
+              )}
               <div className={styles.field}>
                 Industry
                 <span className={styles.value}>{profile.industry_category || "Not set"}</span>
