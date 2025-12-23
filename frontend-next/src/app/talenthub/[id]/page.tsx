@@ -14,6 +14,7 @@ type AdRecord = {
   description: string | null;
   requirements: string | null;
   employment_type: string | null;
+  industry_category: string | null;
   apply_url: string | null;
   tags: string[] | null;
   expires_at: string | null;
@@ -37,7 +38,9 @@ export default function AdDetailPage({ params }: Props) {
       try {
         const { data, error: fetchErr } = await supabase
           .from("job_posts")
-          .select("id,title,company,location,description,requirements,employment_type,apply_url,tags,expires_at,created_at,owner_id")
+          .select(
+            "id,title,company,location,description,requirements,employment_type,industry_category,apply_url,tags,expires_at,created_at,owner_id"
+          )
           .eq("id", params.id)
           .single();
         if (fetchErr) {
@@ -96,6 +99,7 @@ export default function AdDetailPage({ params }: Props) {
                 {ad.location ? ` - ${ad.location}` : ""}
                 {ad.employment_type ? ` - ${ad.employment_type}` : ""}
               </p>
+              {ad.industry_category && <p className={styles.meta}>Industry: {ad.industry_category}</p>}
               {ad.expires_at && (
                 <p className={expiresSoon ? styles.expirySoon : styles.expiry}>
                   Expires {new Date(ad.expires_at).toLocaleDateString()}

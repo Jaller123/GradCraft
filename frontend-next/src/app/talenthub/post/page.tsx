@@ -11,6 +11,7 @@ type FormState = {
   company: string;
   location: string;
   employmentType: string;
+  industryCategory: string;
   description: string;
   requirements: string;
   applyUrl: string;
@@ -23,6 +24,7 @@ const EMPTY_FORM: FormState = {
   company: "",
   location: "",
   employmentType: "full_time",
+  industryCategory: "software",
   description: "",
   requirements: "",
   applyUrl: "",
@@ -58,6 +60,10 @@ export default function PostRolePage() {
     setForm((prev) => ({ ...prev, employmentType: e.target.value }));
   };
 
+  const updateIndustry = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setForm((prev) => ({ ...prev, industryCategory: e.target.value }));
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError("");
@@ -82,6 +88,7 @@ export default function PostRolePage() {
         company: form.company.trim(),
         location: form.location.trim() || null,
         employment_type: form.employmentType,
+        industry_category: form.industryCategory,
         description: form.description.trim() || null,
         requirements: form.requirements.trim() || null,
         apply_url: form.applyUrl.trim() || null,
@@ -155,6 +162,17 @@ export default function PostRolePage() {
                   <option value="part_time">Part time</option>
                   <option value="contract">Contract</option>
                   <option value="graduate_program">Graduate program</option>
+                </select>
+              </label>
+              <label className={styles.label}>
+                Industry category
+                <select className={styles.input} value={form.industryCategory} onChange={updateIndustry}>
+                  <option value="software">Software</option>
+                  <option value="data">Data</option>
+                  <option value="design">Design</option>
+                  <option value="marketing">Marketing</option>
+                  <option value="operations">Operations</option>
+                  <option value="other">Other</option>
                 </select>
               </label>
               <label className={styles.label}>

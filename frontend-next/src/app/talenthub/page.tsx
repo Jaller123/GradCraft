@@ -14,19 +14,23 @@ type AdPreview = {
   employment_type: string | null;
   tags: string[] | null;
   expires_at: string | null;
+  industry_category: string | null;
+  created_at: string;
 };
 
 export default function RecruitersPage() {
   const router = useRouter();
   const [ads, setAds] = useState<AdPreview[]>([]);
   const [adsError, setAdsError] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
+  const [industryFilter, setIndustryFilter] = useState("all");
+  const [employmentFilter, setEmploymentFilter] = useState("all");
 
   useEffect(() => {
     supabase
       .from("job_posts")
-      .select("id,title,company,location,employment_type,tags,expires_at")
+      .select("id,title,company,location,employment_type,tags,expires_at,industry_category,created_at")
       .order("created_at", { ascending: false })
-      .limit(3)
       .then(({ data, error }) => {
         if (error) {
           setAdsError(error.message);
@@ -37,6 +41,20 @@ export default function RecruitersPage() {
         }
       });
   }, []);
+
+  const filteredAds = ads
+    .filter((ad) => (industryFilter === "all" ? true : ad.industry_category === industryFilter))
+    .filter((ad) => (employmentFilter === "all" ? true : ad.employment_type === employmentFilter))
+    .sort((a, b) => {
+      if (sortBy === "expiring") {
+        const aTime = a.expires_at ? Date.parse(a.expires_at) : Number.MAX_SAFE_INTEGER;
+        const bTime = b.expires_at ? Date.parse(b.expires_at) : Number.MAX_SAFE_INTEGER;
+        return aTime - bTime;
+      }
+      const aCreated = Date.parse(a.created_at);
+      const bCreated = Date.parse(b.created_at);
+      return bCreated - aCreated;
+    });
 
   const handlePostRole = async () => {
     const { data } = await supabase.auth.getSession();
@@ -71,15 +89,52 @@ export default function RecruitersPage() {
         <section className={styles.market}>
           <div className={styles.marketHeader}>
             <h2 className={styles.marketTitle}>Latest postings</h2>
-            <div className={styles.chipRow}>
-              <span className={styles.chip}>New grad friendly</span>
-              <span className={styles.chip}>Fresh listings</span>
+            <div className={styles.filterRow}>
+              <label className={styles.filterLabel}>
+                Sort
+                <select className={styles.filterSelect} value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                  <option value="relevant">Most relevant</option>
+                  <option value="newest">Newest first</option>
+                  <option value="expiring">Expiring soon</option>
+                </select>
+              </label>
+              <label className={styles.filterLabel}>
+                Industry
+                <select
+                  className={styles.filterSelect}
+                  value={industryFilter}
+                  onChange={(e) => setIndustryFilter(e.target.value)}
+                >
+                  <option value="all">All industries</option>
+                  <option value="software">Software</option>
+                  <option value="data">Data</option>
+                  <option value="design">Design</option>
+                  <option value="marketing">Marketing</option>
+                  <option value="operations">Operations</option>
+                  <option value="other">Other</option>
+                </select>
+              </label>
+              <label className={styles.filterLabel}>
+                Type
+                <select
+                  className={styles.filterSelect}
+                  value={employmentFilter}
+                  onChange={(e) => setEmploymentFilter(e.target.value)}
+                >
+                  <option value="all">All types</option>
+                  <option value="full_time">Full time</option>
+                  <option value="internship">Internship</option>
+                  <option value="part_time">Part time</option>
+                  <option value="contract">Contract</option>
+                  <option value="graduate_program">Graduate program</option>
+                </select>
+              </label>
             </div>
           </div>
           <div className={styles.list}>
             {adsError && <p className={styles.footerNote}>Unable to load roles yet.</p>}
-            {!adsError && ads.length === 0 && <p className={styles.footerNote}>No roles posted yet.</p>}
-            {ads.map((ad) => {
+            {!adsError && filteredAds.length === 0 && <p className={styles.footerNote}>No roles posted yet.</p>}
+            {filteredAds.map((ad) => {
               const expiresAt = ad.expires_at ? new Date(ad.expires_at) : null;
               const daysLeft = expiresAt ? Math.ceil((expiresAt.getTime() - Date.now()) / 86400000) : null;
               const isExpiringSoon = daysLeft !== null && daysLeft <= 5;
