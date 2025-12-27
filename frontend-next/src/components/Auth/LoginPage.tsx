@@ -24,6 +24,7 @@ const LoginPage: React.FC = () => {
   const [studiedRole, setStudiedRole] = useState("");
   const [occupationRole, setOccupationRole] = useState("");
   const [industryCategory, setIndustryCategory] = useState("software");
+  const [graduationYear, setGraduationYear] = useState("");
   const confirmRedirectRef = useRef(false);
 
   useEffect(() => {
@@ -72,6 +73,7 @@ const LoginPage: React.FC = () => {
       setStudiedRole("");
       setOccupationRole("");
       setIndustryCategory("software");
+      setGraduationYear("");
       setRoleStep("select");
     }
   }, [mode]);
@@ -81,7 +83,8 @@ const LoginPage: React.FC = () => {
     name: string,
     major: string,
     occupation: string,
-    industry: string
+    industry: string,
+    gradYear: string
   ) => {
     const trimmedName = name.trim();
     const { error: signUpErr } = await supabase.auth.signUp({
@@ -94,6 +97,7 @@ const LoginPage: React.FC = () => {
           studied_role: major.trim(),
           occupation_role: occupation.trim(),
           industry_category: industry,
+          graduation_year: gradYear ? Number(gradYear) : null,
         },
       },
     });
@@ -138,13 +142,19 @@ const LoginPage: React.FC = () => {
           setLoading(false);
           return;
         }
+        if (accountType === "student" && !graduationYear) {
+          setShowRoleModal(true);
+          setRoleStep("details");
+          setLoading(false);
+          return;
+        }
         if (accountType === "recruiter" && !occupationRole.trim()) {
           setShowRoleModal(true);
           setRoleStep("details");
           setLoading(false);
           return;
         }
-        await signUpWithRole(accountType, fullName, studiedRole, occupationRole, industryCategory);
+        await signUpWithRole(accountType, fullName, studiedRole, occupationRole, industryCategory, graduationYear);
       }
     } catch (err: any) {
       setError(err?.message || "Authentication failed");
@@ -164,6 +174,10 @@ const LoginPage: React.FC = () => {
       setError("Please add your field of study.");
       return;
     }
+    if (accountType === "student" && !graduationYear) {
+      setError("Please add your graduation year.");
+      return;
+    }
     if (accountType === "recruiter" && !occupationRole.trim()) {
       setError("Please add your occupation.");
       return;
@@ -173,7 +187,7 @@ const LoginPage: React.FC = () => {
     setStatus("");
     setLoading(true);
     try {
-      await signUpWithRole(accountType, fullName, studiedRole, occupationRole, industryCategory);
+      await signUpWithRole(accountType, fullName, studiedRole, occupationRole, industryCategory, graduationYear);
     } catch (err: any) {
       setError(err?.message || "Authentication failed");
     } finally {
@@ -307,16 +321,30 @@ const LoginPage: React.FC = () => {
                     </select>
                   </label>
                   {accountType === "student" ? (
-                    <label className={styles.label}>
-                      Field of study
-                      <input
-                        className={styles.input}
-                        type="text"
-                        placeholder="Computer Science, UX Design, Analytics"
-                        value={studiedRole}
-                        onChange={(e) => setStudiedRole(e.target.value)}
-                      />
-                    </label>
+                    <>
+                      <label className={styles.label}>
+                        Field of study
+                        <input
+                          className={styles.input}
+                          type="text"
+                          placeholder="Computer Science, UX Design, Analytics"
+                          value={studiedRole}
+                          onChange={(e) => setStudiedRole(e.target.value)}
+                        />
+                      </label>
+                      <label className={styles.label}>
+                        Graduation year
+                        <input
+                          className={styles.input}
+                          type="number"
+                          min="2000"
+                          max="2100"
+                          placeholder="2024"
+                          value={graduationYear}
+                          onChange={(e) => setGraduationYear(e.target.value)}
+                        />
+                      </label>
+                    </>
                   ) : (
                     <label className={styles.label}>
                       Occupation
