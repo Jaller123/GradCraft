@@ -137,7 +137,7 @@ const Navbar: React.FC = () => {
                     <Link className={styles.menuLink} href="/profile">
                       Profile
                     </Link>
-                    <Link className={styles.menuLink} href="/profile">
+                    <Link className={styles.menuLink} href="/options">
                       Options
                     </Link>
                     <button className={styles.menuLogout} onClick={handleLogout} disabled={loading}>
