@@ -218,7 +218,7 @@ const LoginPage: React.FC = () => {
         <p className={styles.subtitle}>
           Use your email and password. We’ll keep your CVs tied to your account.
         </p>
-        <form className={styles.form} onSubmit={handleAuth}>
+        <form className={styles.form} onSubmit={handleAuth} autoComplete="off">
           {mode === "signup" && (
             <label className={styles.label}>
               Full name
@@ -236,6 +236,7 @@ const LoginPage: React.FC = () => {
             <input
               className={styles.input}
               type="email"
+              autoComplete="off"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
