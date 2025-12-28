@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { supabase } from "../../../lib/supabaseClient";
 import styles from "./CandidatesPage.module.css";
 
@@ -130,6 +131,9 @@ export default function CandidatesPage() {
                 {candidate.industry_category && <span className={styles.tag}>{candidate.industry_category}</span>}
                 {candidate.studied_role && <span className={styles.tag}>{candidate.studied_role}</span>}
               </div>
+              <Link className={styles.link} href={`/talenthub/candidates/${candidate.user_id}`}>
+                View profile
+              </Link>
             </article>
           ))}
         </section>

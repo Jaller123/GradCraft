@@ -12,6 +12,8 @@ const SavedCvsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [primaryId, setPrimaryId] = useState<string | null>(null);
+  const [savingPrimary, setSavingPrimary] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -24,6 +26,12 @@ const SavedCvsPage: React.FC = () => {
         }
         const data = await listCvs();
         setItems(data);
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("primary_resume_id")
+          .eq("user_id", sessionData.session.user.id)
+          .single();
+        setPrimaryId(profileData?.primary_resume_id ?? null);
       } catch (e: any) {
         setError(e?.message || "Failed to load CVs");
       } finally {
@@ -31,6 +39,28 @@ const SavedCvsPage: React.FC = () => {
       }
     })();
   }, []);
+
+  const handleSetPrimary = async (resumeId: string) => {
+    setError("");
+    setSavingPrimary(resumeId);
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session?.user) {
+        router.replace("/login?reason=login_required");
+        return;
+      }
+      const { error: updateErr } = await supabase
+        .from("profiles")
+        .update({ primary_resume_id: resumeId })
+        .eq("user_id", sessionData.session.user.id);
+      if (updateErr) throw updateErr;
+      setPrimaryId(resumeId);
+    } catch (e: any) {
+      setError(e?.message || "Failed to set primary resume.");
+    } finally {
+      setSavingPrimary(null);
+    }
+  };
 
   return (
 <div className={styles.wrap}>
@@ -76,6 +106,13 @@ const SavedCvsPage: React.FC = () => {
                   }}
                 >
                   Open
+                </button>
+                <button
+                  className={styles.btnPrimary}
+                  onClick={() => handleSetPrimary(rec.id)}
+                  disabled={savingPrimary === rec.id}
+                >
+                  {primaryId === rec.id ? "Primary resume" : "Select as primary resume"}
                 </button>
                 <button className={styles.btnRename} onClick={async () => {
                   const next = prompt("Rename CV", rec.title);

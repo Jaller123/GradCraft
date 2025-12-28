@@ -5,7 +5,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 14px;
 }
 
@@ -26,23 +26,49 @@
 .cardTitle { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .time { font-size: 12px; color: #9ab; margin-top: 4px; }
 
-.actions { display:flex; gap: 8px; padding: 10px 12px 12px; }
+.actions { display:flex; flex-direction: column; gap: 8px; padding: 10px 12px 12px; }
 .actions button {
-  border:1px solid #ddd; border-radius: 8px; padding: 6px 10px; cursor: pointer;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius: 10px;
+  padding: 6px 10px;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: transform .15s ease, background .2s ease, border-color .2s ease;
 }
 
 .btnOpen{
-  background: #008f0c; color: #ffffff; border: none; 
+  background: linear-gradient(135deg, #6aa9ff, #68e2c2);
+  color: #0b1222;
+  border: none;
+}
+.btnPrimary{
+  background: rgba(106, 169, 255, 0.14);
+  color: #d7e6ff;
+  border: 1px solid rgba(106, 169, 255, 0.35);
 }
 .btnRename{
-  background: #aebf16; color: #000000; border: none; 
+  background: rgba(255, 255, 255, 0.08);
+  color: #e9ecf2;
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 .btnDelete{
-  background: #a60000; color: #fdfdfd; border: none; 
+  background: rgba(255, 92, 92, 0.16);
+  color: #ffd2d2;
+  border: 1px solid rgba(255, 92, 92, 0.45);
 }
-.btnOpen:hover { background: #00ff15; color: #7d7d7d}
-.btnRename:hover { background: #e8ff1c; }
-.btnDelete:hover { background: #ff0000; }
+.btnPrimary{
+  background: #1f2a3b; color: #9fd6ff; border: none;
+}
+.btnPrimary:disabled{
+  opacity: .7; cursor: not-allowed;
+}
+.btnOpen:hover { transform: translateY(-1px); }
+.btnPrimary:hover { background: rgba(106, 169, 255, 0.22); transform: translateY(-1px); }
+.btnRename:hover { background: rgba(255, 255, 255, 0.14); transform: translateY(-1px); }
+.btnDelete:hover { background: rgba(255, 92, 92, 0.26); transform: translateY(-1px); }
 
 .pdfExport {
   background: #fff !important;

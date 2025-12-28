@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabaseClient";
+import { listCvs } from "../../components/CvStore";
 import styles from "./OptionsPage.module.css";
 
 type Profile = {
@@ -15,6 +16,7 @@ type Profile = {
   studied_role: string | null;
   occupation_role: string | null;
   industry_category: string | null;
+  primary_resume_id: string | null;
 };
 
 type Tab = "profile" | "security";
@@ -29,6 +31,7 @@ const EMPTY_PROFILE: Profile = {
   studied_role: "",
   occupation_role: "",
   industry_category: "software",
+  primary_resume_id: null,
 };
 
 export default function OptionsPage() {
@@ -43,6 +46,7 @@ export default function OptionsPage() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [pendingEmail, setPendingEmail] = useState("");
+  const [resumes, setResumes] = useState<{ id: string; title: string }[]>([]);
 
   useEffect(() => {
     const load = async () => {
@@ -55,13 +59,15 @@ export default function OptionsPage() {
         const { data: profileData, error: profileErr } = await supabase
           .from("profiles")
           .select(
-            "full_name,role,email,location,graduation_title,graduation_year,studied_role,occupation_role,industry_category"
+            "full_name,role,email,location,graduation_title,graduation_year,studied_role,occupation_role,industry_category,primary_resume_id"
           )
           .eq("user_id", sessionData.session.user.id)
           .single();
         if (profileErr) throw profileErr;
         setProfile((prev) => ({ ...prev, ...profileData }));
         setPendingEmail(profileData?.email ?? sessionData.session.user.email ?? "");
+        const list = await listCvs();
+        setResumes(list.map((cv) => ({ id: cv.id, title: cv.title })));
       } catch (err: any) {
         setError(err?.message || "Failed to load options.");
       } finally {
@@ -91,6 +97,7 @@ export default function OptionsPage() {
         studied_role: profile.studied_role?.trim() || null,
         occupation_role: profile.occupation_role?.trim() || null,
         industry_category: profile.industry_category || null,
+        primary_resume_id: profile.primary_resume_id || null,
         updated_at: new Date().toISOString(),
       };
       const { error: updateErr } = await supabase
@@ -295,6 +302,21 @@ export default function OptionsPage() {
                   />
                 </label>
               )}
+              <label className={styles.label}>
+                Primary resume
+                <select
+                  className={styles.select}
+                  value={profile.primary_resume_id ?? ""}
+                  onChange={(e) => setProfile((prev) => ({ ...prev, primary_resume_id: e.target.value || null }))}
+                >
+                  <option value="">No primary resume</option>
+                  {resumes.map((cv) => (
+                    <option key={cv.id} value={cv.id}>
+                      {cv.title}
+                    </option>
+                  ))}
+                </select>
+              </label>
               <div className={styles.actions}>
                 <button className={styles.primary} type="button" onClick={updateProfile} disabled={saving}>
                   {saving ? "Saving..." : "Save changes"}

@@ -1,0 +1,125 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { supabase } from "../../../../lib/supabaseClient";
+import styles from "./CandidateDetail.module.css";
+
+type Profile = {
+  user_id: string;
+  full_name: string | null;
+  email: string | null;
+  role: string | null;
+  location: string | null;
+  graduation_title: string | null;
+  graduation_year: number | null;
+  studied_role: string | null;
+  industry_category: string | null;
+  primary_resume_id: string | null;
+};
+
+type ResumePreview = {
+  id: string;
+  title: string;
+  thumb_data_url: string | null;
+};
+
+type Props = {
+  params: { id: string };
+};
+
+export default function CandidateDetailPage({ params }: Props) {
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [resume, setResume] = useState<ResumePreview | null>(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const { data, error: profileErr } = await supabase
+          .from("profiles")
+          .select(
+            "user_id,full_name,email,role,location,graduation_title,graduation_year,studied_role,industry_category,primary_resume_id"
+          )
+          .eq("user_id", params.id)
+          .single();
+        if (profileErr) throw profileErr;
+        setProfile(data);
+
+        if (data?.primary_resume_id) {
+          const { data: resumeData, error: resumeErr } = await supabase
+            .from("resumes")
+            .select("id,title,thumb_data_url")
+            .eq("id", data.primary_resume_id)
+            .single();
+          if (!resumeErr) {
+            setResume(resumeData);
+          }
+        }
+      } catch (err: any) {
+        setError(err?.message || "Failed to load candidate profile.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [params.id]);
+
+  return (
+    <main className={styles.page}>
+      <div className={styles.shell}>
+        <div className={styles.card}>
+          {loading && <p className={styles.empty}>Loading profile...</p>}
+          {!loading && error && <p className={styles.empty}>{error}</p>}
+          {!loading && !error && profile && (
+            <>
+              <h1 className={styles.title}>{profile.full_name || "Student profile"}</h1>
+              <p className={styles.meta}>
+                {profile.graduation_title || "Graduate"}{" "}
+                {profile.graduation_year ? `• Class of ${profile.graduation_year}` : ""}
+              </p>
+              <div className={styles.grid}>
+                <div className={styles.field}>
+                  Email
+                  <span className={styles.value}>{profile.email || "Not shared"}</span>
+                </div>
+                <div className={styles.field}>
+                  Location
+                  <span className={styles.value}>{profile.location || "Not set"}</span>
+                </div>
+                <div className={styles.field}>
+                  Field of study
+                  <span className={styles.value}>{profile.studied_role || "Not set"}</span>
+                </div>
+                <div className={styles.field}>
+                  Industry
+                  <span className={styles.value}>{profile.industry_category || "Not set"}</span>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className={styles.card}>
+          <h2 className={styles.title}>Resume preview</h2>
+          {!profile && <p className={styles.empty}>No profile loaded.</p>}
+          {profile && !profile.primary_resume_id && (
+            <p className={styles.empty}>No primary resume selected yet.</p>
+          )}
+          {resume?.thumb_data_url ? (
+            <div className={styles.preview}>
+              <img className={styles.thumb} src={resume.thumb_data_url} alt={`${resume.title} preview`} />
+            </div>
+          ) : resume && !resume.thumb_data_url ? (
+            <p className={styles.empty}>No resume thumbnail available.</p>
+          ) : null}
+        </div>
+
+        <Link className={styles.link} href="/talenthub/candidates">
+          Back to candidates
+        </Link>
+      </div>
+    </main>
+  );
+}

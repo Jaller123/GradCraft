@@ -15,11 +15,19 @@ type Profile = {
   studied_role: string | null;
   occupation_role: string | null;
   industry_category: string | null;
+  primary_resume_id: string | null;
+};
+
+type ResumePreview = {
+  id: string;
+  title: string;
+  thumb_data_url: string | null;
 };
 
 export default function ProfilePage() {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [resume, setResume] = useState<ResumePreview | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -31,15 +39,36 @@ export default function ProfilePage() {
           router.replace("/login?reason=login_required");
           return;
         }
-        const { data, error: fetchErr } = await supabase
+        let { data, error: fetchErr } = await supabase
           .from("profiles")
           .select(
-            "full_name,email,role,location,graduation_title,graduation_year,studied_role,occupation_role,industry_category"
+            "full_name,email,role,location,graduation_title,graduation_year,studied_role,occupation_role,industry_category,primary_resume_id"
           )
           .eq("user_id", sessionData.session.user.id)
           .single();
+
+        if (fetchErr && String(fetchErr.message || "").includes("primary_resume_id")) {
+          const fallback = await supabase
+            .from("profiles")
+            .select("full_name,email,role,location,graduation_title,graduation_year,studied_role,occupation_role,industry_category")
+            .eq("user_id", sessionData.session.user.id)
+            .single();
+          fetchErr = fallback.error ?? null;
+          data = fallback.data ?? null;
+        }
+
         if (fetchErr) throw fetchErr;
         setProfile(data);
+        if (data?.primary_resume_id) {
+          const { data: resumeData, error: resumeErr } = await supabase
+            .from("resumes")
+            .select("id,title,thumb_data_url")
+            .eq("id", data.primary_resume_id)
+            .single();
+          if (!resumeErr) setResume(resumeData);
+        } else {
+          setResume(null);
+        }
       } catch (err: any) {
         setError(err?.message || "Failed to load profile.");
       } finally {
@@ -107,6 +136,21 @@ export default function ProfilePage() {
               </div>
             </div>
           )}
+        </section>
+
+        <section className={styles.card}>
+          <h2 className={styles.title}>Resume preview</h2>
+          {loading && <p className={styles.notice}>Loading resume...</p>}
+          {!loading && profile && !profile.primary_resume_id && (
+            <p className={styles.notice}>No primary resume selected yet.</p>
+          )}
+          {resume?.thumb_data_url ? (
+            <div className={styles.preview}>
+              <img className={styles.thumb} src={resume.thumb_data_url} alt={`${resume.title} preview`} />
+            </div>
+          ) : resume && !resume.thumb_data_url ? (
+            <p className={styles.notice}>No resume thumbnail available.</p>
+          ) : null}
         </section>
       </div>
     </main>
