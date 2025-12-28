@@ -204,6 +204,27 @@ const LoginPage: React.FC = () => {
     setLoading(false);
   };
 
+  const handleForgotPassword = async () => {
+    setError("");
+    setStatus("");
+    if (!email.trim()) {
+      setError("Enter your email to reset your password.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error: resetErr } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (resetErr) throw resetErr;
+      setStatus("Password reset email sent. Check your inbox.");
+    } catch (err: any) {
+      setError(err?.message || "Failed to send reset email.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!toast) return;
     const timer = window.setTimeout(() => setToast(""), 4500);
@@ -255,6 +276,11 @@ const LoginPage: React.FC = () => {
           <button className={styles.submit} type="submit" disabled={loading}>
             {loading ? "Working..." : mode === "signin" ? "Sign in" : "Create account"}
           </button>
+          {mode === "signin" && (
+            <button className={styles.linkBtn} type="button" onClick={handleForgotPassword} disabled={loading}>
+              Forgot password?
+            </button>
+          )}
         </form>
 
         {showRoleModal && (
