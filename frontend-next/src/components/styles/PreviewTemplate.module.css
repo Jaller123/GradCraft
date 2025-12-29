@@ -1,6 +1,6 @@
 .pageWrap { padding: 24px; display:flex; flex-direction:column; gap:16px; align-items:center; }
 .resume {
-  width: 850px; max-width: 100%;
+  width: 931px; max-width: 100%;
   background: #fff; color: #111; padding: 40px 48px;
   box-shadow: 0 10px 30px rgba(0,0,0,.12); border-radius: 12px;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;

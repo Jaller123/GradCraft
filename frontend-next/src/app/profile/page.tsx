@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabaseClient";
+import ResumePreview from "../../components/CV Form/ResumePreview";
+import type { CvData } from "../../components/types";
 import styles from "./ProfilePage.module.css";
 
 type Profile = {
@@ -15,13 +17,13 @@ type Profile = {
   studied_role: string | null;
   occupation_role: string | null;
   industry_category: string | null;
-  primary_resume_id: string | null;
+  primary_resume_id?: string | null;
 };
 
 type ResumePreview = {
   id: string;
   title: string;
-  thumb_data_url: string | null;
+  data: CvData;
 };
 
 export default function ProfilePage() {
@@ -39,7 +41,7 @@ export default function ProfilePage() {
           router.replace("/login?reason=login_required");
           return;
         }
-        let { data, error: fetchErr } = await supabase
+        let { data, error: fetchErr }: { data: Profile | null; error: any } = await supabase
           .from("profiles")
           .select(
             "full_name,email,role,location,graduation_title,graduation_year,studied_role,occupation_role,industry_category,primary_resume_id"
@@ -54,7 +56,7 @@ export default function ProfilePage() {
             .eq("user_id", sessionData.session.user.id)
             .single();
           fetchErr = fallback.error ?? null;
-          data = fallback.data ?? null;
+          data = fallback.data ? { ...fallback.data, primary_resume_id: null } : null;
         }
 
         if (fetchErr) throw fetchErr;
@@ -62,10 +64,10 @@ export default function ProfilePage() {
         if (data?.primary_resume_id) {
           const { data: resumeData, error: resumeErr } = await supabase
             .from("resumes")
-            .select("id,title,thumb_data_url")
+            .select("id,title,data")
             .eq("id", data.primary_resume_id)
             .single();
-          if (!resumeErr) setResume(resumeData);
+          if (!resumeErr && resumeData?.data) setResume(resumeData);
         } else {
           setResume(null);
         }
@@ -144,12 +146,12 @@ export default function ProfilePage() {
           {!loading && profile && !profile.primary_resume_id && (
             <p className={styles.notice}>No primary resume selected yet.</p>
           )}
-          {resume?.thumb_data_url ? (
+          {resume?.data ? (
             <div className={styles.preview}>
-              <img className={styles.thumb} src={resume.thumb_data_url} alt={`${resume.title} preview`} />
+              <ResumePreview cv={resume.data} />
             </div>
-          ) : resume && !resume.thumb_data_url ? (
-            <p className={styles.notice}>No resume thumbnail available.</p>
+          ) : resume ? (
+            <p className={styles.notice}>Resume data missing.</p>
           ) : null}
         </section>
       </div>

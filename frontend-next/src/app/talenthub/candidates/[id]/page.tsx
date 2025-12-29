@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "../../../../lib/supabaseClient";
+import ResumePreview from "../../../../components/CV Form/ResumePreview";
+import type { CvData } from "../../../../components/types";
 import styles from "./CandidateDetail.module.css";
 
 type Profile = {
@@ -21,7 +23,7 @@ type Profile = {
 type ResumePreview = {
   id: string;
   title: string;
-  thumb_data_url: string | null;
+  data: CvData;
 };
 
 type Props = {
@@ -50,7 +52,7 @@ export default function CandidateDetailPage({ params }: Props) {
         if (data?.primary_resume_id) {
           const { data: resumeData, error: resumeErr } = await supabase
             .from("resumes")
-            .select("id,title,thumb_data_url")
+            .select("id,title,data")
             .eq("id", data.primary_resume_id)
             .single();
           if (!resumeErr) {
@@ -107,12 +109,12 @@ export default function CandidateDetailPage({ params }: Props) {
           {profile && !profile.primary_resume_id && (
             <p className={styles.empty}>No primary resume selected yet.</p>
           )}
-          {resume?.thumb_data_url ? (
+          {resume?.data ? (
             <div className={styles.preview}>
-              <img className={styles.thumb} src={resume.thumb_data_url} alt={`${resume.title} preview`} />
+              <ResumePreview cv={resume.data} />
             </div>
-          ) : resume && !resume.thumb_data_url ? (
-            <p className={styles.empty}>No resume thumbnail available.</p>
+          ) : resume ? (
+            <p className={styles.empty}>Resume data missing.</p>
           ) : null}
         </div>
 
