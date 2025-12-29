@@ -35,8 +35,10 @@ const PreviewPage: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const resumeId = searchParams.get("resumeId") ?? undefined;
+  const shouldPrint = searchParams.get("print") === "1";
   const [cv, setCv] = React.useState<CvData | null>(null);
   const originalTitleRef = React.useRef<string | null>(null);
+  const printedRef = React.useRef(false);
 
   React.useEffect(() => {
     (async () => {
@@ -78,6 +80,17 @@ const PreviewPage: React.FC = () => {
       }
     })();
   }, [cv]);
+
+  React.useEffect(() => {
+    if (!cv || !shouldPrint || printedRef.current) return;
+    printedRef.current = true;
+    const kick = async () => {
+      await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
+      await new Promise((resolve) => setTimeout(resolve, 150));
+      window.print();
+    };
+    kick();
+  }, [cv, shouldPrint]);
 
   const handleDownloadPdf = () => window.print();
 

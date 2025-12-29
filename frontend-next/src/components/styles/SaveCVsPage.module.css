@@ -65,6 +65,14 @@
 .btnPrimary:disabled{
   opacity: .7; cursor: not-allowed;
 }
+.btnDownload{
+  background: rgba(104, 226, 194, 0.16);
+  color: #c6f3e9;
+  border: 1px solid rgba(104, 226, 194, 0.4);
+}
+.btnDownload:hover{
+  background: rgba(104, 226, 194, 0.26);
+}
 .btnOpen:hover { transform: translateY(-1px); }
 .btnPrimary:hover { background: rgba(106, 169, 255, 0.22); transform: translateY(-1px); }
 .btnRename:hover { background: rgba(255, 255, 255, 0.14); transform: translateY(-1px); }

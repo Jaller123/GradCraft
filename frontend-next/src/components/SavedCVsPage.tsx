@@ -14,6 +14,7 @@ const SavedCvsPage: React.FC = () => {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [primaryId, setPrimaryId] = useState<string | null>(null);
   const [savingPrimary, setSavingPrimary] = useState<string | null>(null);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -62,6 +63,18 @@ const SavedCvsPage: React.FC = () => {
     }
   };
 
+  const handleDownload = async (resumeId: string) => {
+    setError("");
+    setDownloadingId(resumeId);
+    try {
+      router.push(`/preview?resumeId=${resumeId}&print=1`);
+    } catch (e: any) {
+      setError(e?.message || "Failed to download CV.");
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
   return (
 <div className={styles.wrap}>
       <div className={styles.header}>
@@ -106,6 +119,13 @@ const SavedCvsPage: React.FC = () => {
                   }}
                 >
                   Open
+                </button>
+                <button
+                  className={styles.btnDownload}
+                  onClick={() => handleDownload(rec.id)}
+                  disabled={downloadingId === rec.id}
+                >
+                  {downloadingId === rec.id ? "Preparing..." : "Download"}
                 </button>
                 <button
                   className={styles.btnPrimary}
