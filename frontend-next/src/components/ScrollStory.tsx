@@ -9,15 +9,29 @@ const blocks = [
     title: "Tell your story",
     body:
       "Drop your background in plain language. We listen for roles, dates, schools, and projects so you don't have to wrestle with forms first.",
-    imageSrc: "/assets/Resume.png",
-    imageAlt: "Chatbot and CV form awaiting your details",
+    imageSrc: "/assets/person.svg",
+    imageAlt: "Person icon",
   },
   {
     title: "AI fills the form",
     body:
       "The chatbot lifts your details into structured fields instantly so you can tweak and export a job-ready CV faster than hand-filling forms.",
-    imageSrc: "/assets/CVForm.jpg",
-    imageAlt: "Finished CV after the assistant structures your info",
+    imageSrc: "/assets/robot.svg",
+    imageAlt: "Robot icon",
+  },
+  {
+    title: "ATS-ready by default",
+    body:
+      "We format resumes to stay clean, consistent, and ATS compatible so recruiters can scan and shortlist faster without messy layouts.",
+    imageSrc: "/assets/form.svg",
+    imageAlt: "Form icon",
+  },
+  {
+    title: "Talent hub matches",
+    body:
+      "Connect with recruiters and entry level opportunities in one place, with profiles and resumes that stay ready to share.",
+    imageSrc: "/assets/handshake.svg",
+    imageAlt: "Handshake icon",
   },
 ];
 
