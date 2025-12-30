@@ -7,3 +7,5 @@ pydantic-settings
 httpx
 python-jose
 supabase
+jinja2
+playwright

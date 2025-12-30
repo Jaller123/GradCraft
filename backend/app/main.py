@@ -1,10 +1,14 @@
 import os
+import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv, find_dotenv
 from app.api.routes import ai, auth, resumes, health
 
 load_dotenv(dotenv_path=find_dotenv(), override=False)
+
+if os.name == "nt":
+    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
 
 def create_app() -> FastAPI:

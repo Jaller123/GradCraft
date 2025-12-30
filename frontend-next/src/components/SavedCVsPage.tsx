@@ -67,7 +67,25 @@ const SavedCvsPage: React.FC = () => {
     setError("");
     setDownloadingId(resumeId);
     try {
-      router.push(`/preview?resumeId=${resumeId}&print=1`);
+      const { data } = await supabase.auth.getSession();
+      const token = data.session?.access_token;
+      const base = process.env.NEXT_PUBLIC_API_BASE_URL as string;
+      const res = await fetch(`${base}/api/resumes/${resumeId}/pdf`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!res.ok) {
+        const detail = await res.text();
+        throw new Error(detail || "Failed to download CV.");
+      }
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "resume.pdf";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
     } catch (e: any) {
       setError(e?.message || "Failed to download CV.");
     } finally {
