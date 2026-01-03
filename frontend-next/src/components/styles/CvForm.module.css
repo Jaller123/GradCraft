@@ -1,15 +1,14 @@
-/* ====== Outer surface around the form (your <div className={styles.cardSurface}> wrapper) ====== */
+/* ====== Outer surface around the form ====== */
 .cardSurface {
   width: 100%;
   max-width: 820px;
-  background: var(--bg-panel);                          /* dark glass */
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-right: 5px solid rgba(30,30,30,0.8);           /* template vibe */
-  border-radius: 14px;
-  box-shadow: 3px 10px 20px 5px rgba(0, 0, 0, .5);      /* matches template */
+  background: rgba(14, 18, 34, 0.85);
+  color: #edf1f7;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
   padding: 22px;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
   align-self: start;
   justify-self: stretch;
 }
@@ -29,7 +28,7 @@
 .label {
   font-weight: 600;
   letter-spacing: 0.2px;
-  color: var(--text);
+  color: #cfd6ea;
 }
 
 /* Two inputs side-by-side (dates) */
@@ -39,56 +38,60 @@
   gap: 0.75rem;
 }
 
-/* ====== Inputs (underline teal, translucent bg) ====== */
+/* ====== Inputs ====== */
 .input,
 .textarea {
   width: 100%;
-  font-size: 16px;
-  color: black;
-  background: white;
+  font-size: 15px;
+  color: #e9ecf2;
+  background: #0f1226;
   padding: 10px 12px;
-  border: 1px solid var(--teal);        /* top/left/right removed below for the underline effect */
-  border-top: none;
-  border-left: none;
-  border-right: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   outline: none;
-  border-radius: 6px 6px 6px 6px;
-  transition: box-shadow .18s ease, background-color .18s ease, border-color .18s ease;
+  border-radius: 10px;
+  transition: box-shadow 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
   resize: vertical;
-  min-height: 55px
+  font-family: inherit;
+}
+
+.input {
+  min-height: 44px;
+}
+
+.textarea {
+  min-height: 120px;
 }
 
 .input::placeholder,
 .textarea::placeholder {
-  color: var(--text-muted);
+  color: #9fb0cc;
 }
 
 .input:focus,
 .textarea:focus {
-  border-color: var(--teal);
-  box-shadow: 0 0 0 4px var(--ring);
-  background: rgba(213, 213, 213, 0.35);
-  color: white;
+  border-color: rgba(106, 169, 255, 0.7);
+  box-shadow: 0 0 0 3px rgba(106, 169, 255, 0.2);
+  background: rgba(15, 18, 38, 0.95);
 }
 
 .continueBar {
   position: sticky;
   bottom: 0;
   padding-top: 8px;
-  background: linear-gradient(to top, rgba(22,24,47,0.95), rgba(22,24,47,0));
+  background: linear-gradient(to top, rgba(11, 13, 21, 0.95), rgba(11, 13, 21, 0));
   display: flex;
   justify-content: flex-end;
   padding-bottom: 4px;
   z-index: 1;
 }
 
-/* ====== Experience cards (each added item) ====== */
+/* ====== Experience cards ====== */
 .card {
-  background: var(--bg-panel-alt);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--teal);
-  color: var(--text);
-  border-radius: 12px;
+  background: rgba(18, 22, 40, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 3px solid rgba(104, 226, 194, 0.65);
+  color: #edf1f7;
+  border-radius: 14px;
   padding: 12px;
   display: grid;
   gap: 6px;
@@ -101,68 +104,65 @@
 }
 .list li {
   margin: 2px 0;
-  color: var(--text);
+  color: #e3e9f5;
 }
 
 .btnRow {
   display: flex;
-  gap: .5rem;
-  margin-top: .25rem;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
 }
-
 
 /* ====== Buttons ====== */
 .btnPrimary {
-  background: rgba(20, 20, 20, .6);
-  color: var(--text);
-  border: 1px solid var(--teal);
+  background: linear-gradient(120deg, #75a9ff, #5fe0c8);
+  color: #0b0d15;
+  border: none;
   border-radius: 999px;
   padding: 10px 18px;
   font-weight: 700;
   cursor: pointer;
-  transition: transform .1s ease, box-shadow .15s ease, padding .2s ease, background .2s ease;
-  box-shadow: 0 8px 20px rgba(0,0,0,.15);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
 .btnPrimary:hover {
-  background: rgba(20, 20, 20, .8);
-  padding: 10px 24px; /* mimic templateƒ?Ts hover grow */
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 .btnGhost {
   background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e3e9f5;
   border-radius: 10px;
   padding: 6px 10px;
   font-weight: 600;
   cursor: pointer;
-  transition: background .15s ease, border-color .15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 .btnGhost:hover {
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* ====== react-datepicker: make it readable on dark and echo teal accents ====== */
+/* ====== react-datepicker ====== */
 .react-datepicker,
 .react-datepicker__header {
   background: #0f1717 !important;
   border-color: rgba(255,255,255,0.08) !important;
-  color: var(--text) !important;
+  color: #edf1f7 !important;
 }
 .react-datepicker__current-month,
 .react-datepicker__day-name,
 .react-datepicker__day {
-  color: var(--text) !important;
+  color: #edf1f7 !important;
 }
 .react-datepicker__day--selected,
 .react-datepicker__day--keyboard-selected {
-  background: var(--teal) !important;
+  background: #5fe0c8 !important;
   color: #001c1c !important;
 }
 .react-datepicker__day:hover {
-  background: var(--teal-12) !important;
+  background: rgba(95, 224, 200, 0.2) !important;
 }
 .react-datepicker-popper {
   z-index: 50;

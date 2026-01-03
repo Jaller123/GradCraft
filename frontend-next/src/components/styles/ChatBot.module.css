@@ -1,17 +1,15 @@
-/* Container card (dark glass) */
+/* Container card */
 .wrap {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
   padding: 0.9rem;
-  background: var(--panel);
-  color: var(--text);
-  box-shadow: 3px 10px 20px 5px rgba(0, 0, 0, .5);
-  backdrop-filter: blur(6px);
-  margin-left: -55%;
-  margin-top: 15%;
+  background: rgba(14, 18, 34, 0.85);
+  color: #edf1f7;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(8px);
 }
 
 /* Header */
@@ -20,62 +18,78 @@
   align-items: center;
   justify-content: space-between;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .title {
-  background: linear-gradient(90deg, var(--teal), #ffffff);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-weight: 800;
+  margin: 0;
+  font-weight: 700;
+  font-size: 16px;
+  color: #edf1f7;
 }
 
-
-/* Clear button: ghost pill in teal */
+/* Clear button */
 .clearBtn {
   font-size: 0.85rem;
   background: transparent;
-  border: 1px solid var(--teal);
-  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #e3e9f5;
   border-radius: 999px;
   padding: 6px 10px;
   cursor: pointer;
-  transition: background .15s ease, transform .1s ease, box-shadow .15s ease;
-  box-shadow: 0 6px 16px rgba(0,0,0,.18);
+  transition: background 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
 }
 .clearBtn:hover {
-  background: rgba(20,20,20,.35);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.24);
   transform: translateY(-1px);
 }
 .clearBtn:active {
   transform: translateY(0);
 }
 
-/* ====== UNCHANGED: chat history look/colors ====== */
+/* History */
 .history {
   height: 50vh;
   overflow: auto;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  background: #fafafa;
-  padding: 0.5rem;
-  border-radius: 6px;
+  background: #0f1226;
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
-.empty { color: #6b7280; font-size: 0.9rem; }
+.empty {
+  color: #9fb0cc;
+  font-size: 0.9rem;
+}
 .msg {
-  max-width: 80%;
-  padding: 0.5rem 0.75rem;
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  max-width: 85%;
+  padding: 0.6rem 0.8rem;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.25);
 }
-.me { align-self: flex-end; background: #dbeafe; }
-.bot { align-self: flex-start; background: #f3f4f6; }
-.msgText { white-space: pre-wrap; }
-.meta { font-size: 0.7rem; color: #6b7280; margin-top: 0.25rem; }
+.me {
+  align-self: flex-end;
+  background: rgba(106, 169, 255, 0.18);
+  border: 1px solid rgba(106, 169, 255, 0.35);
+}
+.bot {
+  align-self: flex-start;
+  background: rgba(95, 224, 200, 0.12);
+  border: 1px solid rgba(95, 224, 200, 0.3);
+}
+.msgText {
+  white-space: pre-wrap;
+}
+.meta {
+  font-size: 0.7rem;
+  color: #9fb0cc;
+  margin-top: 0.25rem;
+}
 
-/* ====== UNCHANGED: input row + colors ====== */
+/* Input row */
 .inputRow {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -83,32 +97,39 @@
 }
 .textarea {
   width: 100%;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  padding: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 0.6rem;
   resize: vertical;
-  color:#fafafa
+  background: #0f1226;
+  color: #e9ecf2;
+  font-family: inherit;
 }
 .sendBtn {
-  padding: 0.5rem 0.9rem;
-  border-radius: 6px;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
   border: none;
-  background: #3b82f6;
-  color: #fff;
+  background: linear-gradient(120deg, #75a9ff, #5fe0c8);
+  color: #0b0d15;
+  font-weight: 600;
   cursor: pointer;
+  transition: transform 0.15s ease;
 }
-.sendBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+.sendBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.sendBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
-/* Error tone on dark */
 .error {
-  color: #ffb4b4; /* softer on dark */
+  color: #ffb4b4;
   font-size: 0.9rem;
 }
 
-.wrap {
-  color: #111;            /* was var(--text) (white); now black */
+@media (max-width: 720px) {
+  .history {
+    height: 40vh;
+  }
 }
-
-
-
-/* Optional: tone down the clear button to match dark text */
