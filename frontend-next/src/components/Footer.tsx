@@ -29,7 +29,7 @@ const Footer: React.FC = () => {
         <div className={styles.linksCol}>
           <h4 className={styles.heading}>Information</h4>
           <Link href="/privacy" className={styles.link}>Privacy Policy</Link>
-          <a href="mailto:hello@gradcraft.app" className={styles.link}>Contact us</a>
+          <a href="mailto:jallerken@hotmail.se" className={styles.link}>Contact us</a>
           <span className={styles.link}>Stockholm, Sweden</span>
         </div>
       </div>
