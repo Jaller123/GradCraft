@@ -20,7 +20,8 @@ export default function PrivacyPage() {
             <li>Account details: email, name, and role.</li>
             <li>Profile details: education, graduation year, and study field you provide.</li>
             <li>Resume data: CV content you create or upload.</li>
-            <li>Usage data: basic analytics about how the app is used.</li>
+            <li>Chat inputs: text you send to the CV assistant.</li>
+            <li>Local storage: saved chat history and auth/session data stored in your browser.</li>
           </ul>
 
           <h2 className={styles.sectionTitle}>How we use your information</h2>
@@ -28,7 +29,22 @@ export default function PrivacyPage() {
             <li>To create and manage your account and saved resumes.</li>
             <li>To match students and recruiters and show relevant profiles.</li>
             <li>To provide support, security, and improve the platform.</li>
+            <li>To generate CV suggestions using our AI provider when you request it.</li>
           </ul>
+
+          <h2 className={styles.sectionTitle}>Cookies and local storage</h2>
+          <p className={styles.text}>
+            GradCraft uses browser storage to keep you signed in and remember chat history. We do not use
+            advertising cookies today. If we add ads or analytics in the future, we will update this policy
+            and request consent where required.
+          </p>
+
+          <h2 className={styles.sectionTitle}>Third-party services</h2>
+          <p className={styles.text}>
+            We use trusted providers to run the service: Supabase for authentication and data storage, and
+            Groq for AI-assisted CV extraction. These providers process data only to deliver their services
+            to us.
+          </p>
 
           <h2 className={styles.sectionTitle}>Sharing</h2>
           <p className={styles.text}>
@@ -46,7 +62,8 @@ export default function PrivacyPage() {
           <ul className={styles.list}>
             <li>Access and update your data in your profile and options pages.</li>
             <li>Request deletion of your account.</li>
-            <li>Withdraw consent for optional data processing.</li>
+            <li>Withdraw consent for optional data processing where required.</li>
+            <li>EU/UK users can request access, correction, deletion, portability, or restriction.</li>
           </ul>
         </section>
       </div>
