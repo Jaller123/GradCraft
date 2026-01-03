@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabaseClient";
 import { listCvs } from "../../components/CvStore";
+import { deleteAccount } from "../../components/api";
 import styles from "./OptionsPage.module.css";
 
 type Profile = {
@@ -47,6 +48,8 @@ export default function OptionsPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [pendingEmail, setPendingEmail] = useState("");
   const [resumes, setResumes] = useState<{ id: string; title: string }[]>([]);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deletingAccount, setDeletingAccount] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -167,6 +170,34 @@ export default function OptionsPage() {
       setError(err?.message || "Failed to update password.");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setError("");
+    setStatus("");
+    if (!deletePassword) {
+      setError("Enter your password to confirm deletion.");
+      return;
+    }
+    setDeletingAccount(true);
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const email = sessionData.session?.user?.email;
+      if (!email) throw new Error("Missing current email.");
+      const { error: signInErr } = await supabase.auth.signInWithPassword({
+        email,
+        password: deletePassword,
+      });
+      if (signInErr) throw signInErr;
+      await deleteAccount();
+      await supabase.auth.signOut();
+      router.replace("/login?reason=account_deleted");
+    } catch (err: any) {
+      setError(err?.message || "Failed to delete account.");
+    } finally {
+      setDeletingAccount(false);
+      setDeletePassword("");
     }
   };
 
@@ -379,6 +410,32 @@ export default function OptionsPage() {
                 <button className={styles.primary} type="button" onClick={handlePasswordChange} disabled={saving}>
                   Update password
                 </button>
+              </div>
+              <div className={styles.divider} />
+              <div className={styles.dangerBlock}>
+                <h3 className={styles.dangerTitle}>Delete account</h3>
+                <p className={styles.hint}>
+                  This permanently removes your account, resumes, and posted roles. This action cannot be undone.
+                </p>
+                <label className={styles.label}>
+                  Confirm password
+                  <input
+                    className={styles.input}
+                    type="password"
+                    value={deletePassword}
+                    onChange={(e) => setDeletePassword(e.target.value)}
+                  />
+                </label>
+                <div className={styles.actions}>
+                  <button
+                    className={styles.danger}
+                    type="button"
+                    onClick={handleDeleteAccount}
+                    disabled={deletingAccount}
+                  >
+                    {deletingAccount ? "Deleting..." : "Delete account"}
+                  </button>
+                </div>
               </div>
               {status && <div className={styles.status}>{status}</div>}
               {error && <div className={styles.error}>{error}</div>}

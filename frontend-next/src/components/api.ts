@@ -51,3 +51,7 @@ export async function upsertResume(payload: Partial<ResumeRecord>) {
 export async function deleteResume(id: string) {
   return api.request<{ deleted: number }>(`/api/resumes/${id}`, { method: "DELETE" });
 }
+
+export async function deleteAccount() {
+  return api.request<{ deleted: boolean }>("/api/account", { method: "DELETE" });
+}
