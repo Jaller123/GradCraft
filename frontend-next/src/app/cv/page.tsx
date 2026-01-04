@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Chatbot from "../../components/CV Form/ChatBot";
-import CvForm from "../../components/CV Form/CvForm";
-import styles from "../../App.module.css";
+import Chatbot from "../../features/cv/components/ChatBot";
+import CvForm from "../../features/cv/components/CvForm";
+import styles from "../../features/cv/CvPage.module.css";
 import { supabase } from "../../lib/supabaseClient";
 import {
   getCurrent,
@@ -13,8 +13,8 @@ import {
   setCurrent,
   loadCv,
   getCurrentId,
-} from "../../components/CvStore";
-import { CvData } from "../../components/types";
+} from "../../features/cv/cvStore";
+import { CvData } from "../../features/cv/types";
 
 const EMPTY_CV: CvData = {
   fullName: "",

@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabaseClient";
-import ResumePreview from "../../components/CV Form/ResumePreview";
-import type { CvData } from "../../components/types";
+import ResumePreview from "../../features/cv/components/ResumePreview";
+import type { CvData } from "../../features/cv/types";
 import styles from "./ProfilePage.module.css";
 
 type Profile = {
