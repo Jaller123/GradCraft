@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabaseClient";
-import { listCvs } from "../../components/CvStore";
-import { deleteAccount } from "../../components/api";
+import { listCvs } from "../../features/cv/cvStore";
+import { deleteAccount } from "../../shared/api";
 import styles from "./OptionsPage.module.css";
 
 type Profile = {

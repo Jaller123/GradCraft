@@ -1,4 +1,4 @@
-import PreviewPage from "../../components/CV Form/PreviewPage";
+import PreviewPage from "../../features/cv/components/PreviewPage";
 
 export default function PreviewRoute() {
   return <PreviewPage />;
