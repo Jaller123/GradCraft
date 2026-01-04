@@ -1,0 +1,66 @@
+.banner {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 50;
+}
+
+.content {
+  max-width: 980px;
+  margin: 0 auto;
+  background: rgba(14, 18, 34, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: grid;
+  gap: 12px;
+  color: #edf1f7;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.text {
+  margin: 6px 0 0;
+  color: #cfd6ea;
+  font-size: 14px;
+}
+
+.text a {
+  color: #9fc4ff;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.primary {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(120deg, #75a9ff, #5fe0c8);
+  color: #0b0d15;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ghost {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: #e3e9f5;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (min-width: 900px) {
+  .content {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+  .actions {
+    justify-content: flex-end;
+  }
+}
