@@ -22,6 +22,7 @@ const Navbar: React.FC = () => {
   const [profile, setProfile] = React.useState<Profile | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
   const menuRef = React.useRef<HTMLDivElement | null>(null);
 
   React.useEffect(() => {
@@ -90,9 +91,9 @@ const Navbar: React.FC = () => {
   return (
     <nav className={styles.navbar}>
       <div className={styles.container}>
-        <span className={styles.brand} onClick={() => router.push("/")}>
+        <Link className={styles.brand} href="/">
           GradCraft
-        </span>
+        </Link>
 
         <ul className={styles.links}>
           <li><Link href="/cv" 
@@ -102,6 +103,17 @@ const Navbar: React.FC = () => {
           <li><Link href="/saved" className={styles.link}>Saved CVs</Link></li>
           <li><a href="/talenthub" className={styles.link}>Talent Hub</a></li>
         </ul>
+
+        <button
+          className={styles.menuToggle}
+          type="button"
+          onClick={() => setMobileOpen((prev) => !prev)}
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-nav"
+        >
+          <span className={styles.menuBars} aria-hidden />
+          <span className={styles.srOnly}>Toggle navigation</span>
+        </button>
 
         <div className={styles.userArea}>
           {userEmail ? (
@@ -151,6 +163,41 @@ const Navbar: React.FC = () => {
             <Link href="/login" className={styles.loginBtn}>Login</Link>
           )}
         </div>
+      </div>
+      <div className={`${styles.mobileMenu} ${mobileOpen ? styles.mobileMenuOpen : ""}`} id="mobile-nav">
+        <Link
+          href="/cv"
+          className={styles.mobileLink}
+          onClick={() => {
+            clearCurrent();
+            setMobileOpen(false);
+          }}
+        >
+          Resume Builder
+        </Link>
+        <Link href="/saved" className={styles.mobileLink} onClick={() => setMobileOpen(false)}>
+          Saved CVs
+        </Link>
+        <Link href="/talenthub" className={styles.mobileLink} onClick={() => setMobileOpen(false)}>
+          Talent Hub
+        </Link>
+        {userEmail ? (
+          <>
+            <Link href="/profile" className={styles.mobileLink} onClick={() => setMobileOpen(false)}>
+              Profile
+            </Link>
+            <Link href="/options" className={styles.mobileLink} onClick={() => setMobileOpen(false)}>
+              Options
+            </Link>
+            <button className={styles.mobileLogout} type="button" onClick={handleLogout} disabled={loading}>
+              Logout
+            </button>
+          </>
+        ) : (
+          <Link href="/login" className={styles.mobileLink} onClick={() => setMobileOpen(false)}>
+            Login
+          </Link>
+        )}
       </div>
     </nav>
   );

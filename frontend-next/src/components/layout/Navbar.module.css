@@ -9,6 +9,7 @@
   top: 0;
   z-index: 100;
   box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  overflow: visible;
 }
 
 .container {
@@ -24,6 +25,7 @@
   margin-right: 2rem;
   letter-spacing: 1px;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .links {
@@ -167,4 +169,114 @@
   background: #0ae0e0;
   color: #111528;
   border-color: transparent;
+}
+
+.menuToggle {
+  display: none;
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.menuBars {
+  display: inline-block;
+  width: 18px;
+  height: 12px;
+  position: relative;
+}
+.menuBars::before,
+.menuBars::after,
+.menuBars {
+  background: transparent;
+}
+.menuBars::before,
+.menuBars::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 18px;
+  height: 2px;
+  background: #e9f6ff;
+  border-radius: 999px;
+}
+.menuBars::before {
+  top: 0;
+}
+.menuBars::after {
+  bottom: 0;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.mobileMenu {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 24px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #111528;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  pointer-events: none;
+}
+
+.mobileMenuOpen {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.mobileLink {
+  color: #e9f6ff;
+  text-decoration: none;
+  padding: 8px 6px;
+  border-radius: 8px;
+}
+
+.mobileLink:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.mobileLogout {
+  border: 1px solid rgba(255, 87, 87, 0.6);
+  background: rgba(255, 87, 87, 0.16);
+  color: #ffb0b0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 840px) {
+  .links {
+    display: none;
+  }
+  .userArea {
+    display: none;
+  }
+  .menuToggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
