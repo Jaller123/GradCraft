@@ -17,6 +17,7 @@ type Candidate = {
 };
 
 export default function CandidatesPage() {
+  const [authRequired, setAuthRequired] = useState(false);
   const [industry, setIndustry] = useState("all");
   const [studiedRole, setStudiedRole] = useState("");
   const [newGradOnly, setNewGradOnly] = useState(true);
@@ -29,6 +30,13 @@ export default function CandidatesPage() {
       setLoading(true);
       setError("");
       try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (!sessionData.session?.user) {
+          setAuthRequired(true);
+          setCandidates([]);
+          return;
+        }
+        setAuthRequired(false);
         const minGradYear = newGradOnly ? new Date().getFullYear() - 1 : null;
         let query = supabase
           .from("profiles")
@@ -112,8 +120,13 @@ export default function CandidatesPage() {
 
         <section className={styles.list}>
           {loading && <p className={styles.empty}>Loading candidates...</p>}
+          {!loading && authRequired && (
+            <p className={styles.empty}>
+              Please <Link href="/login">sign in</Link> to view candidate profiles.
+            </p>
+          )}
           {!loading && error && <p className={styles.empty}>{error}</p>}
-          {!loading && !error && candidates.length === 0 && (
+          {!loading && !error && !authRequired && candidates.length === 0 && (
             <p className={styles.empty}>No candidates match those filters yet.</p>
           )}
           {candidates.map((candidate) => (

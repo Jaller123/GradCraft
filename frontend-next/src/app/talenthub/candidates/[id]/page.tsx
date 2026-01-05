@@ -31,6 +31,7 @@ type Props = {
 };
 
 export default function CandidateDetailPage({ params }: Props) {
+  const [authRequired, setAuthRequired] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [resume, setResume] = useState<ResumePreview | null>(null);
   const [error, setError] = useState("");
@@ -39,6 +40,14 @@ export default function CandidateDetailPage({ params }: Props) {
   useEffect(() => {
     const load = async () => {
       try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (!sessionData.session?.user) {
+          setAuthRequired(true);
+          setProfile(null);
+          setResume(null);
+          return;
+        }
+        setAuthRequired(false);
         const { data, error: profileErr } = await supabase
           .from("profiles")
           .select(
@@ -73,6 +82,11 @@ export default function CandidateDetailPage({ params }: Props) {
       <div className={styles.shell}>
         <div className={styles.card}>
           {loading && <p className={styles.empty}>Loading profile...</p>}
+          {!loading && authRequired && (
+            <p className={styles.empty}>
+              Please <Link href="/login">sign in</Link> to view this candidate profile.
+            </p>
+          )}
           {!loading && error && <p className={styles.empty}>{error}</p>}
           {!loading && !error && profile && (
             <>
@@ -105,7 +119,7 @@ export default function CandidateDetailPage({ params }: Props) {
 
         <div className={styles.card}>
           <h2 className={styles.title}>Resume preview</h2>
-          {!profile && <p className={styles.empty}>No profile loaded.</p>}
+          {!profile && !authRequired && <p className={styles.empty}>No profile loaded.</p>}
           {profile && !profile.primary_resume_id && (
             <p className={styles.empty}>No primary resume selected yet.</p>
           )}
