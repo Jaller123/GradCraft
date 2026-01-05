@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Chatbot from "./components/ChatBot";
 import CvForm from "./components/CvForm";
 import styles from "./CvPage.module.css";
+import AdSlot from "../ads/AdSlot";
 import { supabase } from "../../lib/supabaseClient";
 import {
   getCurrent,
@@ -110,7 +111,12 @@ const CvPageClient: React.FC = () => {
   return (
     <main className={styles.main}>
       <div className={styles.grid}>
-        <Chatbot onCvExtract={(json) => setCv((prev) => mergeCv(prev, json))} />
+        <div>
+          <Chatbot onCvExtract={(json) => setCv((prev) => mergeCv(prev, json))} />
+          <div className={styles.adStack}>
+            <AdSlot label="Sidebar ad" />
+          </div>
+        </div>
         <div>
           <h2 className={styles.heading}>Your CV</h2>
           {loading ? <p>Loading...</p> : error ? <p>{error}</p> : <CvForm value={cv} onChange={setCv} onContinue={saveAndContinue} />}

@@ -1,0 +1,22 @@
+.slot {
+  border: 1px dashed rgba(255, 255, 255, 0.22);
+  border-radius: 14px;
+  padding: 14px;
+  background: rgba(10, 12, 22, 0.6);
+  color: #cfd6ea;
+  display: grid;
+  gap: 6px;
+  min-height: 160px;
+}
+
+.label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #9fb0cc;
+}
+
+.placeholder {
+  font-size: 14px;
+  color: #d7e0f0;
+}
