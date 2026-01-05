@@ -16,7 +16,35 @@ type AdPreview = {
   expires_at: string | null;
   industry_category: string | null;
   created_at: string;
+  demo?: boolean;
 };
+
+const DEMO_ADS: AdPreview[] = [
+  {
+    id: "d2a1b8b1-7f94-4a7f-9d9d-0fb4d8f4a6f2",
+    title: "Junior Frontend Developer (Demo)",
+    company: "Nordic Labs",
+    location: "Stockholm",
+    employment_type: "full_time",
+    tags: ["React", "TypeScript", "UI"],
+    expires_at: null,
+    industry_category: "software",
+    created_at: new Date().toISOString(),
+    demo: true,
+  },
+  {
+    id: "c0f1c6d5-1f8a-4e5a-bef5-96b0d6f4fd2c",
+    title: "Data Analyst Intern (Demo)",
+    company: "Polar Insights",
+    location: "Remote",
+    employment_type: "internship",
+    tags: ["SQL", "Analytics", "Python"],
+    expires_at: null,
+    industry_category: "data",
+    created_at: new Date().toISOString(),
+    demo: true,
+  },
+];
 
 export default function RecruitersPage() {
   const router = useRouter();
@@ -55,6 +83,7 @@ export default function RecruitersPage() {
       const bCreated = Date.parse(b.created_at);
       return bCreated - aCreated;
     });
+  const visibleAds = filteredAds.length > 0 ? filteredAds : DEMO_ADS;
 
   const handlePostRole = async () => {
     const { data } = await supabase.auth.getSession();
@@ -133,8 +162,10 @@ export default function RecruitersPage() {
           </div>
           <div className={styles.list}>
             {adsError && <p className={styles.footerNote}>Unable to load roles yet.</p>}
-            {!adsError && filteredAds.length === 0 && <p className={styles.footerNote}>No roles posted yet.</p>}
-            {filteredAds.map((ad) => {
+            {!adsError && filteredAds.length === 0 && (
+              <p className={styles.footerNote}>Showing demo listings until real roles are posted.</p>
+            )}
+            {visibleAds.map((ad) => {
               const expiresAt = ad.expires_at ? new Date(ad.expires_at) : null;
               const daysLeft = expiresAt ? Math.ceil((expiresAt.getTime() - Date.now()) / 86400000) : null;
               const isExpiringSoon = daysLeft !== null && daysLeft <= 5;
@@ -161,9 +192,15 @@ export default function RecruitersPage() {
                   </div>
                 )}
                 <div className={styles.jobActions}>
-                  <Link className={styles.jobButton} href={`/talenthub/${ad.id}`}>
-                    View listing
-                  </Link>
+                  {ad.demo ? (
+                    <button className={styles.jobButton} type="button" disabled>
+                      Demo listing
+                    </button>
+                  ) : (
+                    <Link className={styles.jobButton} href={`/talenthub/${ad.id}`}>
+                      View listing
+                    </Link>
+                  )}
                 </div>
               </article>
             );

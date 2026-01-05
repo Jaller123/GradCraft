@@ -18,7 +18,7 @@ export default function TermsPage() {
           <h2 className={styles.sectionTitle}>Service overview</h2>
           <p className={styles.text}>
             GradCraft provides tools to create and manage resumes and to connect students with recruiters. The platform
-            is still unfinished and may change or have limitations.
+            may change or have limitations.
           </p>
 
           <h2 className={styles.sectionTitle}>Eligibility and accounts</h2>

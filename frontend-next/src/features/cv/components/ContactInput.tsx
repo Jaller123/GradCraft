@@ -18,10 +18,6 @@ const ContactInput: React.FC<Props> = ({ value, set }) => {
     set("contacts", { ...contacts, [key]: v });
   };
 
-   const emptyInput = () => {
-    windowAlert("Some fields are missing Please fill in the following fields before adding.");
-  }
-
   const linksCsv =
     contacts.links && contacts.links.length > 0 ? contacts.links.join(", ") : "";
 
@@ -81,8 +77,5 @@ const ContactInput: React.FC<Props> = ({ value, set }) => {
 };
 
 export default ContactInput;
-function windowAlert(arg0: string) {
-  throw new Error("Function not implemented.");
-}
 
 
