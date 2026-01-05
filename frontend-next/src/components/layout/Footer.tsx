@@ -29,7 +29,8 @@ const Footer: React.FC = () => {
         <div className={styles.linksCol}>
           <h4 className={styles.heading}>Information</h4>
           <Link href="/privacy" className={styles.link}>Privacy Policy</Link>
-          <a href="mailto:jallerken@hotmail.se" className={styles.link}>Contact us</a>
+          <Link href="/terms" className={styles.link}>Terms of Service</Link>
+          <Link href="/contact" className={styles.link}>Contact</Link>
           <span className={styles.link}>Stockholm, Sweden</span>
         </div>
       </div>
