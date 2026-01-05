@@ -21,6 +21,13 @@ class ImproveIn(BaseModel):
     job_text: Optional[str] = ""
 
 
+class ResumeUpsertIn(BaseModel):
+    id: Optional[str] = None
+    title: Optional[str] = None
+    data: Dict[str, Any] = Field(default_factory=dict)
+    thumb_data_url: Optional[str] = None
+
+
 CV_JSON_SCHEMA = {
     "type": "object",
     "additionalProperties": False,

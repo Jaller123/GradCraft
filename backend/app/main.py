@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv, find_dotenv
 from app.api.routes import ai, auth, resumes, health
+from app.middleware.rate_limit import rate_limit_middleware
 
 load_dotenv(dotenv_path=find_dotenv(), override=False)
 
@@ -26,6 +27,7 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    app.middleware("http")(rate_limit_middleware)
     app.include_router(ai.router)
     app.include_router(auth.router)
     app.include_router(health.router)

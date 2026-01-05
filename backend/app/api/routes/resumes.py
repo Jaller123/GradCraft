@@ -9,6 +9,7 @@ from app.deps import settings_dep, current_user
 from services.supabase_client import get_supabase_client
 from jinja2 import Environment, select_autoescape
 from playwright.sync_api import sync_playwright
+from models.schemas import ResumeUpsertIn
 
 router = APIRouter(prefix="/api/resumes", tags=["resumes"])
 
@@ -183,7 +184,7 @@ def get_resume(
 
 @router.post("")
 def upsert_resume(
-    payload: dict,
+    payload: ResumeUpsertIn,
     settings=Depends(settings_dep),
     user=Depends(current_user),
     authorization: Optional[str] = Header(default=None),
@@ -191,13 +192,13 @@ def upsert_resume(
     token = authorization.split(" ", 1)[1] if authorization else None
     client = get_supabase_client(settings, token)
     # Normalize input
-    resume_id = payload.get("id") or str(uuid4())
+    resume_id = payload.id or str(uuid4())
     data = {
         "id": resume_id,
         "user_id": user["sub"],
-        "title": payload.get("title") or "Untitled CV",
-        "data": payload.get("data") or {},
-        "thumb_data_url": payload.get("thumb_data_url"),
+        "title": payload.title or "Untitled CV",
+        "data": payload.data or {},
+        "thumb_data_url": payload.thumb_data_url,
     }
     # Upsert on id if provided, otherwise insert new
     resp = client.table("resumes").upsert(
