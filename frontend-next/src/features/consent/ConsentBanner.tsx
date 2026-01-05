@@ -7,12 +7,12 @@ import { consentFlags, readConsent, writeConsent } from "./consent";
 
 export default function ConsentBanner() {
   const [visible, setVisible] = useState(false);
-  const [enabled, setEnabled] = useState({ analytics: false, ads: false });
+  const [enabled, setEnabled] = useState({ analytics: false, ads: false, requireConsent: false });
 
   useEffect(() => {
     const flags = consentFlags();
     setEnabled(flags);
-    if (!flags.analytics && !flags.ads) {
+    if (!flags.analytics && !flags.ads && !flags.requireConsent) {
       setVisible(false);
       return;
     }

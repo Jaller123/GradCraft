@@ -9,6 +9,7 @@ const STORAGE_KEY = "gradcraft_consent_v1";
 export const consentFlags = () => ({
   analytics: process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === "true",
   ads: process.env.NEXT_PUBLIC_ENABLE_ADS === "true",
+  requireConsent: process.env.NEXT_PUBLIC_REQUIRE_CONSENT === "true",
 });
 
 export const readConsent = (): ConsentState | null => {
