@@ -133,3 +133,18 @@
     height: 40vh;
   }
 }
+
+@media (max-width: 600px) {
+  .wrap {
+    padding: 0.75rem;
+  }
+  .history {
+    height: min(35vh, 260px);
+  }
+  .inputRow {
+    grid-template-columns: 1fr;
+  }
+  .sendBtn {
+    width: 100%;
+  }
+}

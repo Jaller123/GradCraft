@@ -12,7 +12,7 @@ export default function PrivacyPage() {
           <p className={styles.meta}>Last updated: {new Date().toLocaleDateString()}</p>
           <p className={styles.text}>
             GradCraft respects your privacy. This policy explains what data we collect, how we use it, and the
-            choices you have. If you have questions, contact us at hello@gradcraft.app.
+            choices you have. If you have questions, contact us at jallerken@hotmail.se
           </p>
 
           <h2 className={styles.sectionTitle}>Information we collect</h2>
