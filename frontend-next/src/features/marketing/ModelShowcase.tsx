@@ -27,8 +27,8 @@ const ModelShowcase: React.FC = () => {
     container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-    camera.position.set(0, 0.2, 4);
+    const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 100);
+    camera.position.set(0, 0.2, 4.5);
 
     const ambient = new THREE.HemisphereLight(0xbfd7ff, 0x0a0c16, 0.9);
     scene.add(ambient);
@@ -50,6 +50,7 @@ const ModelShowcase: React.FC = () => {
       const maxDim = Math.max(size.x, size.y, size.z);
 
       model.position.sub(center);
+      model.position.y += 0.3;
       model.scale.setScalar(maxDim > 0 ? 2.4 / maxDim : 1);
 
       scene.add(model);
@@ -128,6 +129,12 @@ const ModelShowcase: React.FC = () => {
         <p className={styles.description}>
           GradCraft helps recent grads land that first entry role and connect with recruiters,
           while staying free for everyone to use.
+        </p>
+        <p className={styles.credit}>
+          3D model by{" "}
+          <a href="https://poly.pizza" target="_blank" rel="noreferrer">
+            Poly Pizza
+          </a>
         </p>
       </div>
       <div

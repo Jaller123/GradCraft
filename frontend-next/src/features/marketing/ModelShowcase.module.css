@@ -29,6 +29,26 @@
   color: #d9deeb;
 }
 
+.credit {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: #9fb0cc;
+}
+
+.credit a {
+  color: #9fc4ff;
+  text-decoration: none;
+}
+
+.credit a:hover {
+  text-decoration: underline;
+}
+
+.viewer {
+  width: min(760px, 92vw);
+  height: min(520px, 70vw);
+}
+
 .viewer canvas {
   width: 100%;
   height: 100%;
@@ -42,5 +62,10 @@
 
   .title {
     font-size: 24px;
+  }
+
+  .viewer {
+    width: min(520px, 90vw);
+    height: min(360px, 70vw);
   }
 }
