@@ -155,7 +155,6 @@ const PostRoleForm: React.FC<Props> = ({ form, saving, notice, error, onFieldCha
           Back to Talent Hub
         </Link>
       </div>
-      <p className={styles.hint}>Fields map directly to the `job_posts` table.</p>
       {notice && <div className={styles.notice}>{notice}</div>}
       {error && <div className={styles.error}>{error}</div>}
     </form>

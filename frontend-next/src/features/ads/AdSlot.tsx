@@ -23,7 +23,7 @@ const AdSlot: React.FC<Props> = ({ label = "Ad slot", className }) => {
   return (
     <div className={`${styles.slot} ${className ?? ""}`}>
       <div className={styles.label}>{label}</div>
-      <div className={styles.placeholder}>AdSense placement (enable ID when approved)</div>
+      <div className={styles.placeholder}>Advertisement</div>
     </div>
   );
 };

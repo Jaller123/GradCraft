@@ -163,7 +163,7 @@ export default function RecruitersPage() {
           <div className={styles.list}>
             {adsError && <p className={styles.footerNote}>Unable to load roles yet.</p>}
             {!adsError && filteredAds.length === 0 && (
-              <p className={styles.footerNote}>Showing demo listings until real roles are posted.</p>
+              <p className={styles.footerNote}>No roles posted yet. Example listings below.</p>
             )}
             {visibleAds.map((ad) => {
               const expiresAt = ad.expires_at ? new Date(ad.expires_at) : null;
