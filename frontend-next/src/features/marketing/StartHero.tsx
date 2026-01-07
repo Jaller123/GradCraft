@@ -41,6 +41,7 @@ const StartHero: React.FC<Props> = ({ onCreateCvClick, onRecruitersClick }) => {
             />
             ‎‎ into opportunities.
           </span>
+          <span className={styles.betaBadge}>Beta</span>
         </h1>
 
         <div className={styles.ctaRow}>

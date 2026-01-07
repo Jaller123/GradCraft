@@ -1,11 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Script from "next/script";
 import { consentFlags, readConsent } from "./consent";
 
 export default function ConsentScripts() {
   const [consent, setConsent] = useState<{ analytics: boolean; ads: boolean } | null>(null);
   const flags = consentFlags();
+  const adsenseClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
+  const autoAds = process.env.NEXT_PUBLIC_ADSENSE_AUTO === "true";
 
   useEffect(() => {
     if (!flags.analytics && !flags.ads) return;
@@ -27,9 +30,13 @@ export default function ConsentScripts() {
           {/* Add analytics scripts here once IDs are available. */}
         </>
       ) : null}
-      {flags.ads && consent.ads ? (
+      {flags.ads && consent.ads && adsenseClient && autoAds ? (
         <>
-          {/* Add ads scripts here once IDs are available. */}
+          <Script
+            strategy="afterInteractive"
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`}
+            crossOrigin="anonymous"
+          />
         </>
       ) : null}
     </>

@@ -54,6 +54,21 @@
 
 .title span { display: block; }
 
+.betaBadge {
+  align-self: center;
+  display: inline-flex;
+  margin-top: 10px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: rgba(106, 169, 255, 0.18);
+  color: #e9f6ff;
+  border: 1px solid rgba(106, 169, 255, 0.35);
+  width: fit-content;
+}
+
 /* Underline accent for the second line */
 .heroText {
   color:#E29CD2;
