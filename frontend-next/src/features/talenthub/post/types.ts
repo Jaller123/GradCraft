@@ -6,7 +6,9 @@ export type FormState = {
   industryCategory: string;
   description: string;
   requirements: string;
+  applyMethod: "url" | "email";
   applyUrl: string;
+  applyEmail: string;
   tags: string;
   expiresAt: string;
 };
@@ -19,7 +21,9 @@ export const EMPTY_FORM: FormState = {
   industryCategory: "software",
   description: "",
   requirements: "",
+  applyMethod: "url",
   applyUrl: "",
+  applyEmail: "",
   tags: "",
   expiresAt: "",
 };

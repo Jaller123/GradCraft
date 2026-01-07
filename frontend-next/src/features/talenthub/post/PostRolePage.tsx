@@ -50,6 +50,12 @@ const PostRolePage: React.FC = () => {
         .split(",")
         .map((tag) => tag.trim())
         .filter(Boolean);
+      const applyUrl =
+        form.applyMethod === "email"
+          ? form.applyEmail.trim()
+            ? `mailto:${form.applyEmail.trim()}`
+            : null
+          : form.applyUrl.trim() || null;
       const payload = {
         owner_id: userId,
         title: form.title.trim(),
@@ -59,7 +65,7 @@ const PostRolePage: React.FC = () => {
         industry_category: form.industryCategory,
         description: form.description.trim() || null,
         requirements: form.requirements.trim() || null,
-        apply_url: form.applyUrl.trim() || null,
+        apply_url: applyUrl,
         tags: tags.length ? tags : null,
         status: "published",
         expires_at: form.expiresAt ? new Date(form.expiresAt).toISOString() : null,

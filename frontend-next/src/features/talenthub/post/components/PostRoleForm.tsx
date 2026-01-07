@@ -104,15 +104,39 @@ const PostRoleForm: React.FC<Props> = ({ form, saving, notice, error, onFieldCha
         />
       </label>
       <label className={styles.label}>
-        Apply URL
-        <input
+        Apply via
+        <select
           className={styles.input}
-          type="url"
-          placeholder="https://"
-          value={form.applyUrl}
-          onChange={(e) => onFieldChange("applyUrl", e.target.value)}
-        />
+          value={form.applyMethod}
+          onChange={(e) => onFieldChange("applyMethod", e.target.value)}
+        >
+          <option value="url">Link</option>
+          <option value="email">Email</option>
+        </select>
       </label>
+      {form.applyMethod === "url" ? (
+        <label className={styles.label}>
+          Apply URL
+          <input
+            className={styles.input}
+            type="url"
+            placeholder="https://"
+            value={form.applyUrl}
+            onChange={(e) => onFieldChange("applyUrl", e.target.value)}
+          />
+        </label>
+      ) : (
+        <label className={styles.label}>
+          Apply email
+          <input
+            className={styles.input}
+            type="email"
+            placeholder="jobs@company.com"
+            value={form.applyEmail}
+            onChange={(e) => onFieldChange("applyEmail", e.target.value)}
+          />
+        </label>
+      )}
       <label className={styles.label}>
         Tags
         <input
