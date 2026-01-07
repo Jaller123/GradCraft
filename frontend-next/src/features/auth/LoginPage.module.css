@@ -202,3 +202,45 @@
   align-items: center;
   margin-top: 12px;
 }
+
+@media (max-width: 720px) {
+  .wrap {
+    padding: 24px 14px;
+  }
+
+  .card {
+    padding: 20px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .toast {
+    right: 12px;
+    left: 12px;
+    top: 72px;
+  }
+
+  .modal {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 420px) {
+  .card {
+    padding: 16px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .form {
+    gap: 12px;
+  }
+
+  .roleBtn {
+    padding: 10px;
+  }
+}

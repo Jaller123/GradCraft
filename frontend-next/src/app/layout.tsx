@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import ConsentBanner from "../features/consent/ConsentBanner";
 import ConsentScripts from "../features/consent/ConsentScripts";
+import NavbarGate from "../components/layout/NavbarGate";
 
 export const metadata: Metadata = {
   title: "GradCraft",
@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Navbar />
+        <NavbarGate />
         {children}
         <Footer />
         <ConsentScripts />

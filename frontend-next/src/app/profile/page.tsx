@@ -148,7 +148,9 @@ export default function ProfilePage() {
           )}
           {resume?.data ? (
             <div className={styles.preview}>
-              <ResumePreview cv={resume.data} />
+              <div className={styles.previewInner}>
+                <ResumePreview cv={resume.data} />
+              </div>
             </div>
           ) : resume ? (
             <p className={styles.notice}>Resume data missing.</p>
