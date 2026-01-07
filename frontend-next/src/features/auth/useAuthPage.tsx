@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { AccountType, Mode, RoleStep } from "./types";
 import { useAuthSession } from "./useAuthSession";
 import { useAuthActions } from "./useAuthActions";
@@ -20,7 +21,8 @@ export const useAuthPage = () => {
   const [occupationRole, setOccupationRole] = useState("");
   const [industryCategory, setIndustryCategory] = useState("software");
   const [graduationYear, setGraduationYear] = useState("");
-  const { userEmail, toast, setToast } = useAuthSession(setStatus);
+  const router = useRouter();
+  const { userEmail, toast, setToast } = useAuthSession(setStatus, () => router.push("/"));
 
   useEffect(() => {
     if (mode === "signin") {
@@ -52,6 +54,7 @@ export const useAuthPage = () => {
     setAccountType,
     setShowRoleModal,
     setRoleStep,
+    onSignedIn: () => router.push("/"),
   });
 
   return {

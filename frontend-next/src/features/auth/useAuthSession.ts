@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 
-export const useAuthSession = (setStatus: (value: string) => void) => {
+export const useAuthSession = (setStatus: (value: string) => void, onSignedIn?: () => void) => {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [toast, setToast] = useState<string>("");
   const confirmRedirectRef = useRef(false);
@@ -24,6 +24,9 @@ export const useAuthSession = (setStatus: (value: string) => void) => {
         setToast("Email verified. You're signed in.");
         window.history.replaceState(null, "", window.location.pathname);
         confirmRedirectRef.current = false;
+        onSignedIn?.();
+      } else if (event === "SIGNED_IN") {
+        onSignedIn?.();
       }
     });
     return () => {

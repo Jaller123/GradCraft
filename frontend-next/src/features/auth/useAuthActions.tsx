@@ -20,6 +20,7 @@ type Params = {
   setAccountType: (value: AccountType | null) => void;
   setShowRoleModal: (value: boolean) => void;
   setRoleStep: (value: "select" | "details") => void;
+  onSignedIn?: () => void;
 };
 
 export const useAuthActions = ({
@@ -39,6 +40,7 @@ export const useAuthActions = ({
   setAccountType,
   setShowRoleModal,
   setRoleStep,
+  onSignedIn,
 }: Params) => {
   const signUpWithRole = async (
     selectedRole: AccountType,
@@ -86,6 +88,7 @@ export const useAuthActions = ({
           return;
         }
         setStatus("Signed in");
+        onSignedIn?.();
       } else {
         if (!fullName.trim()) {
           setError("Please enter your full name.");
