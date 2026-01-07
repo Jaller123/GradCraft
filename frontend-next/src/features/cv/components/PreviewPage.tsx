@@ -7,6 +7,7 @@ import styles from "./PreviewTemplate.module.css";
 import type { CvData } from "../types";
 import { saveCurrentCv, getCurrent, loadCv } from "../cvStore";
 import ResumePreview from "./ResumePreview";
+import { supabase } from "../../../lib/supabaseClient";
 
 async function captureThumbnailFromPreview(): Promise<string | undefined> {
   const el = document.querySelector(`.${styles.resume}`) as HTMLElement | null;
@@ -37,11 +38,19 @@ const PreviewPage: React.FC = () => {
   const resumeId = searchParams.get("resumeId") ?? undefined;
   const shouldPrint = searchParams.get("print") === "1";
   const [cv, setCv] = React.useState<CvData | null>(null);
+  const [authRequired, setAuthRequired] = React.useState(false);
   const originalTitleRef = React.useRef<string | null>(null);
   const printedRef = React.useRef(false);
 
   React.useEffect(() => {
     (async () => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session?.user) {
+        setAuthRequired(true);
+        setCv(null);
+        return;
+      }
+      setAuthRequired(false);
       if (resumeId) {
         const data = await loadCv(resumeId);
         setCv(data || EMPTY);
@@ -97,7 +106,11 @@ const PreviewPage: React.FC = () => {
   if (!cv) {
     return (
       <div className={styles.pageWrap}>
-        <p>Loading...</p>
+        {authRequired ? (
+          <p>You have to be logged in.</p>
+        ) : (
+          <p>Loading...</p>
+        )}
       </div>
     );
   }
