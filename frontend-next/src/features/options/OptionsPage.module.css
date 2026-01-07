@@ -177,5 +177,20 @@
 @media (max-width: 720px) {
   .grid {
     grid-template-columns: 1fr;
+    padding: 20px;
+  }
+  .form {
+    width: min(320px, 100%);
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 320px) {
+  .grid {
+    padding: 10px;
+  }
+
+  .card {
+    padding: 0px;
   }
 }
